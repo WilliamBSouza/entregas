@@ -4,3 +4,5 @@ A fim de saber com quem o pedido está na rua ou se o pedido está em separaçao
 
 
 Dia 20-06-2023 erro em desconectar bd linha 261
+
+*****foi dado uma pausa para estudos sobre sql, paqra desenvolver melhor os bancos de dados deste sistema *****

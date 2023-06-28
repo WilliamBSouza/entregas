@@ -258,7 +258,7 @@ def janela_pedidos():
             except Exception as e:
                 status_label.config(text="Erro ao adicionar pedido: " + str(e), fg="red")
             finally:
-                desconectar_bd(conn)
+                desconectar_bd(conn) 
 
         janela_pedidos = Tk()
         janela_pedidos.geometry("320x160")

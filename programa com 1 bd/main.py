@@ -153,7 +153,10 @@ while True:
                     [4] Exibir Entregadores
                     [5] Deletar Cliente
                     [6] Deletar Entregador
-                    [7] Sair
+                    [7] Entregas em Aberto
+                    [8] Entregas em Rota
+                    [9] Adicionar Entregas
+                    [0] Sair
                     digite a opção: """)
     if selecao == "1":
         add_clientes()
@@ -175,7 +178,7 @@ while True:
         id_entregador_a_deletar = input("Digite o código do entregador a ser deletado: ")
         delete_entregador(id_entregador_a_deletar)
     
-    elif selecao == "7":
+    elif selecao == "0":
         break
 
 

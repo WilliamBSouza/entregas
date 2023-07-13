@@ -9,3 +9,7 @@ Dia 20-06-2023 erro em desconectar bd linha 261
 
 
 Reiniciei o projeto dia 10-07-2023 com apenas um banco de dados. 
+
+
+LEMBRETES:
+ADICIONAR AS FUNÇÕES PARA APARECER O NOME DO ENTREGADOR E A DATA NA TABELA ENTREGAS_ROTA

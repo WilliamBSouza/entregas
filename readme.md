@@ -12,4 +12,4 @@ Reiniciei o projeto dia 10-07-2023 com apenas um banco de dados.
 
 
 LEMBRETES:
-ADICIONAR AS FUNÇÕES PARA APARECER O NOME DO ENTREGADOR E A DATA NA TABELA ENTREGAS_ROTA
+criar as funções da tabela entregas finalizadas

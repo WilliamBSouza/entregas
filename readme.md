@@ -12,4 +12,5 @@ Reiniciei o projeto dia 10-07-2023 com apenas um banco de dados.
 
 
 LEMBRETES:
-criar as funções da tabela entregas finalizadas
+criar funções para excluir entregas na tabela de em rota quando ela estiver na tabela de entregas finalizadas, criar a mesma função para entregas em rota e abertas. 
+

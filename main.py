@@ -209,6 +209,17 @@ def exibir_entregas_rota():
     for registro in registros:
         print(registro)
     print("*" * 50)
+
+def exibir_entregas_finalizadas():
+    limpa_terminal()
+    print("Entregas finalizadas:")
+    print("*" * 50)
+    cursor.execute('SELECT * FROM entregas_finalizadas ORDER BY cod_entrega ASC')
+    registros = cursor.fetchall()
+
+    for registro in registros:
+        print(registro)
+    print("*" * 50)
     
 def adicionar_entregador_rota(cod_cliente, cod_entregador):
     # Verifica se o cliente em entregas_aberto existe
@@ -307,17 +318,31 @@ def delete_entregas_rota(cod_entrega):
     # Fecha a conexão
     conexao.close()
 
-def entregas_finalizadas():
-    # Limpa o terminal
-    limpa_terminal()
-
-    print("-" * 50)
-
-    conexao = sqlite3.connect('entregas.db')
-    cursor = conexao.cursor()
-
     #criar def para pegar informaçoes de entregas em rota e adicionar horário chegada e retirar de entregas em rota
+def adicionar_entregas_finalizadas(cod_entrega):
+    # Verifica se a entrega em entregas_rota existe
+    cursor.execute('SELECT cod_entrega FROM entregas_rota WHERE cod_entrega = ?', (cod_entrega,))
+    result_entrega = cursor.fetchone()
+
+    if result_entrega is None:
+        # Entrega em entregas_aberto não encontrado
+        print("A entrega não está em entregas em aberto.")
     
+    else:
+        # Recupera as informações da entrega em entregas_rota
+        cursor.execute('SELECT cod_entrega,cod_entregador, nome_cliente, bairro,telefone_entregador, Entregador, data_entrega, horário_saida FROM entregas_rota WHERE cod_entrega = ?', (cod_entrega,))
+        entrega_rota_info = cursor.fetchone()
+
+        # Obtém o horário atual
+        horario_chegada = obter_horario_atual()
+        
+         # Insere a entrega em rota com o entregador e o horário de saída
+        cursor.execute('INSERT INTO entregas_finalizadas (cod_entrega, cod_entregador, nome_cliente, bairro,telefone_entregador, entregador, data_entrega, horário_saida, horário_chegada) VALUES (?,?,?,?,?,?,?,?,?)', (entrega_rota_info[0], entrega_rota_info[1], entrega_rota_info[2], entrega_rota_info[3],entrega_rota_info[4], entrega_rota_info[5],entrega_rota_info[6], entrega_rota_info[7], horario_chegada))
+
+        # Confirma as alterações
+        conexao.commit()
+
+        print("Entrega finalizada com sucesso.")
 
 
 while True:
@@ -330,8 +355,8 @@ while True:
                     [6] Deletar Entregador
                     [7] Adicionar Entregas em Aberto 
                     [8] Adicionar Entregas em Rota 
-                    [9] Adicionar Entregas finalizadas  x 
-                    [10] Entregas finalizadas por dia x
+                    [9] Adicionar Entregas finalizadas   
+                    [10] Entregas finalizadas  
                     [11] Exibir Entregas Em Aberto
                     [12] Deletar Entrega Em Aberto
                     [13] Deletar Entregas Em Rota
@@ -371,10 +396,11 @@ while True:
         adicionar_entregador_rota(int(codigo_cliente), int(codigo_entregador))
 
     if selecao == "9": # adicionar entregas
-        pass
+        cod_entrega_a_finalizar = input("digite o códico da entrega para finalizar: ")
+        adicionar_entregas_finalizadas(cod_entrega_a_finalizar)
 
-    if selecao == "10": #entregas finalizadas por dia
-        pass
+    if selecao == "10": #entregas finalizadas
+        exibir_entregas_finalizadas()
 
     if selecao == "11": #exibir entregas em aberto
         exibir_entregas_aberto()

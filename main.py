@@ -307,6 +307,19 @@ def delete_entregas_rota(cod_entrega):
     # Fecha a conexão
     conexao.close()
 
+def entregas_finalizadas():
+    # Limpa o terminal
+    limpa_terminal()
+
+    print("-" * 50)
+
+    conexao = sqlite3.connect('entregas.db')
+    cursor = conexao.cursor()
+
+    #criar def para pegar informaçoes de entregas em rota e adicionar horário chegada e retirar de entregas em rota
+    
+
+
 while True:
     selecao = input(""" Opções:
                     [1] Adicionar Cliente
@@ -318,7 +331,7 @@ while True:
                     [7] Adicionar Entregas em Aberto 
                     [8] Adicionar Entregas em Rota 
                     [9] Adicionar Entregas finalizadas  x 
-                    [10] Entregas finalizadas por dia
+                    [10] Entregas finalizadas por dia x
                     [11] Exibir Entregas Em Aberto
                     [12] Deletar Entrega Em Aberto
                     [13] Deletar Entregas Em Rota
@@ -326,6 +339,7 @@ while True:
                     [15] 
                     [16] Sair
                     digite a opção: """)
+    
     if selecao == "1": # adiciona clientes
         add_clientes()
 

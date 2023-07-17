@@ -7,6 +7,14 @@ def obter_horario_atual():
     horario_atual = datetime.now().strftime("%H:%M:%S")
     return horario_atual
 
+# Função para obter a data atual para cod unico
+def data_cod_unico():
+    return datetime.now().strftime('%Y-%m-%d')
+
+# Função para obter o horário atual para cod unico
+def horario_cod_unico():
+    return datetime.now().strftime('%H:%M:%S')
+
 def obter_data_atual():
     data_atual = date.today()
     return data_atual
@@ -27,10 +35,12 @@ cursor = conexao.cursor()
 #cursor.execute('CREATE TABLE entregas_aberto (cod_cliente INT, nome_cliente VARCHAR(45), bairro_cliente VARCHAR(40))')
 #cursor.execute('CREATE TABLE entregas_rota (cod_entrega INT PRIMARY KEY, cod_entregador INT, nome_cliente , bairro , telefone_entregador)')
 #cursor.execute('ALTER TABLE entregas_rota ADD COLUMN Entregador VARCHAR(45)')
+#cursor.execute('ALTER TABLE entregas_aberto ADD COLUMN cod_entrega VARCHAR(25)')
 #cursor.execute('ALTER TABLE entregas_rota ADD COLUMN data_entrega DATE')
 #cursor.execute('ALTER TABLE entregas_rota ADD COLUMN horário_saida VARCHAR(10) ')
 #cursor.execute('CREATE TABLE entregas_finalizadas (cod_entrega INT PRIMARY KEY, cod_entregador INT, nome_cliente , bairro , telefone_entregador, Entregador, data_entrega, horário_saida, horário_chegada)')
-
+#cursor.execute('ALTER TABLE entregas_rota ADD COLUMN cod_cliente INT')
+#cursor.execute('ALTER TABLE entregas_finalizadas ADD COLUMN cod_cliente INT')
 
 def add_clientes():
 
@@ -178,8 +188,11 @@ def add_entregas_aberto():
         cursor.execute('SELECT nome, bairro FROM clientes WHERE cod = ?', (codigo_cliente,))
         cliente_info = cursor.fetchone()
 
+        # Criar o valor único para a coluna cod_entrega
+        cod_entrega_unico = f"{obter_data_atual()} {obter_horario_atual()}"
+
         # Insere a entrega em aberto com as informações do cliente
-        cursor.execute('INSERT INTO entregas_aberto VALUES(?,?,?)', (codigo_cliente, cliente_info[0], cliente_info[1]))
+        cursor.execute('INSERT INTO entregas_aberto VALUES(?,?,?,?)', (codigo_cliente, cliente_info[0], cliente_info[1],cod_entrega_unico))
 
         # Confirma as alterações
         conexao.commit()
@@ -238,17 +251,12 @@ def adicionar_entregador_rota(cod_cliente, cod_entregador):
         print("O entregador com o código fornecido não existe.")
     else:
         # Recupera as informações do cliente em entregas_aberto
-        cursor.execute('SELECT nome_cliente, bairro_cliente FROM entregas_aberto WHERE cod_cliente = ?', (cod_cliente,))
+        cursor.execute('SELECT nome_cliente, bairro_cliente , cod_entrega FROM entregas_aberto WHERE cod_cliente = ?', (cod_cliente,))
         entrega_info = cursor.fetchone()
 
         # Recupera as informações do entregador em entregadores
         cursor.execute('SELECT nome, telefone FROM entregadores WHERE cod = ?', (cod_entregador,))
         entregador_info = cursor.fetchone()
-
-        # Gera um novo código de entrega único
-        cursor.execute('SELECT MAX(cod_entrega) FROM entregas_rota')
-        max_cod_entrega = cursor.fetchone()[0]
-        novo_cod_entrega = 1 if max_cod_entrega is None else max_cod_entrega + 1
 
         # Obtém a data atual
         data_entrega = obter_data_atual()
@@ -257,7 +265,7 @@ def adicionar_entregador_rota(cod_cliente, cod_entregador):
         horario_saida = obter_horario_atual()
         
          # Insere a entrega em rota com o entregador e o horário de saída
-        cursor.execute('INSERT INTO entregas_rota (cod_entrega, cod_entregador, nome_cliente, bairro,telefone_entregador, entregador, data_entrega, horário_saida) VALUES (?,?,?,?,?,?,?,?)', (novo_cod_entrega, cod_entregador, entrega_info[0], entrega_info[1],entregador_info[1], entregador_info[0],data_entrega, horario_saida))
+        cursor.execute('INSERT INTO entregas_rota (cod_entrega, cod_entregador, nome_cliente, bairro,telefone_entregador, entregador, data_entrega, horário_saida) VALUES (?,?,?,?,?,?,?,?)', (entrega_info[2], cod_entregador, entrega_info[0], entrega_info[1],entregador_info[1], entregador_info[0],data_entrega, horario_saida))
 
         
         # Confirma as alterações
@@ -336,8 +344,14 @@ def adicionar_entregas_finalizadas(cod_entrega):
         # Obtém o horário atual
         horario_chegada = obter_horario_atual()
         
-         # Insere a entrega em rota com o entregador e o horário de saída
+        # Insere a entrega em rota com o entregador e o horário de saída
         cursor.execute('INSERT INTO entregas_finalizadas (cod_entrega, cod_entregador, nome_cliente, bairro,telefone_entregador, entregador, data_entrega, horário_saida, horário_chegada) VALUES (?,?,?,?,?,?,?,?,?)', (entrega_rota_info[0], entrega_rota_info[1], entrega_rota_info[2], entrega_rota_info[3],entrega_rota_info[4], entrega_rota_info[5],entrega_rota_info[6], entrega_rota_info[7], horario_chegada))
+
+
+        #criar método de analizar cod entrega na tabela entregas em rota e apagar a entrega da tabela anterior
+        cursor.execute('SELECT cod_entrega FROM entregas_finalizadas WHERE cod_entrega = ?', (cod_entrega,))
+        entrega_finalizada_info = cursor.fetchone()
+        cursor.execute("DELETE FROM entregas_rota WHERE cod_entrega = ?", cod_entrega)
 
         # Confirma as alterações
         conexao.commit()

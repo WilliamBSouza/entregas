@@ -12,6 +12,5 @@ Reiniciei o projeto dia 10-07-2023 com apenas um banco de dados.
 
 
 LEMBRETES:
-criar funções para excluir entregas na tabela de em rota quando ela estiver na tabela de entregas finalizadas, criar a mesma função para entregas em rota e abertas. 
-resolver erro no cod de entregas em aberto para entregas em rota 
-cod para exluir entregas finalizadas das entregas em rota está errado 
+adicionar a data da entrega apenas em entregas finalizadas pois no cod da entrega já mostra a data que a entrega foi criada 
+

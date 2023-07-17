@@ -171,6 +171,40 @@ def delete_cliente(cod):
     # Fecha a conexão
     conexao.close()
 
+def excluir_entrega_aberto_rota(cod_entrega):
+    # Verifica se a entrega em entregas_aberto existe
+    cursor.execute('SELECT cod_entrega FROM entregas_aberto WHERE cod_entrega = ?', (cod_entrega,))
+    result_entrega = cursor.fetchone()
+
+    if result_entrega is None:
+        # Entrega em entregas_aberto não encontrada
+        print("A entrega não está em entregas em aberto.")
+    else:
+        # Executa a instrução DELETE
+        cursor.execute('DELETE FROM entregas_aberto WHERE cod_entrega = ?', (cod_entrega,))
+
+        # Confirma as alterações
+        conexao.commit()
+
+        print("Entrega em aberto excluída com sucesso.")
+
+def excluir_entrega_rota_finalizadas(cod_entrega):
+    # Verifica se a entrega em entregas_aberto existe
+    cursor.execute('SELECT cod_entrega FROM entregas_rota WHERE cod_entrega = ?', (cod_entrega,))
+    result_entrega_rota = cursor.fetchone()
+
+    if result_entrega_rota is None:
+        # Entrega em entregas_rota não encontrada
+        print("A entrega não está em entregas em rota.")
+    else:
+        # Executa a instrução DELETE
+        cursor.execute('DELETE FROM entregas_rota WHERE cod_entrega = ?', (cod_entrega,))
+
+        # Confirma as alterações
+        conexao.commit()
+
+        print("Entrega em rota excluída com sucesso.")
+
 def add_entregas_aberto():
     limpa_terminal()
     print("-" * 50)
@@ -267,7 +301,10 @@ def adicionar_entregador_rota(cod_cliente, cod_entregador):
          # Insere a entrega em rota com o entregador e o horário de saída
         cursor.execute('INSERT INTO entregas_rota (cod_entrega, cod_entregador, nome_cliente, bairro,telefone_entregador, entregador, data_entrega, horário_saida) VALUES (?,?,?,?,?,?,?,?)', (entrega_info[2], cod_entregador, entrega_info[0], entrega_info[1],entregador_info[1], entregador_info[0],data_entrega, horario_saida))
 
-        
+        #exclui entrega em aberto quando vai para entregas em rota
+        excluir_entrega_aberto_rota(entrega_info[2])
+
+   
         # Confirma as alterações
         conexao.commit()
 
@@ -349,9 +386,9 @@ def adicionar_entregas_finalizadas(cod_entrega):
 
 
         #criar método de analizar cod entrega na tabela entregas em rota e apagar a entrega da tabela anterior
-        cursor.execute('SELECT cod_entrega FROM entregas_finalizadas WHERE cod_entrega = ?', (cod_entrega,))
-        entrega_finalizada_info = cursor.fetchone()
-        cursor.execute("DELETE FROM entregas_rota WHERE cod_entrega = ?", cod_entrega)
+        ###teste
+        excluir_entrega_rota_finalizadas(entrega_rota_info[0])
+        ### fim do teste
 
         # Confirma as alterações
         conexao.commit()
@@ -370,7 +407,7 @@ while True:
                     [7] Adicionar Entregas em Aberto 
                     [8] Adicionar Entregas em Rota 
                     [9] Adicionar Entregas finalizadas   
-                    [10] Entregas finalizadas  
+                    [10] Exibir ♀Entregas finalizadas  
                     [11] Exibir Entregas Em Aberto
                     [12] Deletar Entrega Em Aberto
                     [13] Deletar Entregas Em Rota

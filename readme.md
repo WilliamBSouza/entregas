@@ -16,6 +16,8 @@ início do projeto frontend dia 19-07-2023
 
 LEMBRETES:
 
+ADICIONAR BOTÕES EM TODAS JANELAS E APÓS ISSO CRIAR AS INTERFÁCIES PARA CADA COMANDO...
+
 adicionar projeto frontend
 
  1 fazer layout do projeto antes de iniciar. 

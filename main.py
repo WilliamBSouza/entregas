@@ -428,8 +428,13 @@ def pesquisa_data_entregador(entregador, data_entrega ):
         print(registro)
     print("*" * 50)
 
-while True:
 
+#  *****************AVISO*****************AVISO*******************************AVISO****************************AVISO***********************
+
+while False:  # False para servir apenas como base para o FRONTEND
+
+#  *****************AVISO*****************AVISO*******************************AVISO****************************AVISO***********************
+   
     selecao = input("""Opções:
                     [1] Adicionar
                     [2] Deletar

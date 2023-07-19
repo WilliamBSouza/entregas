@@ -2,6 +2,8 @@ import sqlite3
 import os
 from datetime import date
 from datetime import datetime
+import datetime
+import time
 
 def obter_horario_atual():
     horario_atual = datetime.now().strftime("%H:%M:%S")
@@ -17,6 +19,10 @@ def horario_cod_unico():
 
 def obter_data_atual():
     data_atual = date.today()
+    return data_atual
+
+def obter_data_atual_teste():
+    data_atual = str(date.today())
     return data_atual
 
 def limpa_terminal():
@@ -268,7 +274,7 @@ def exibir_entregas_finalizadas():
         print(registro)
     print("*" * 50)
     
-def adicionar_entregador_rota(cod_cliente, cod_entregador):
+def adicionar_entregador_rota(cod_cliente, cod_entregador): # adiciona entregas em rota
     # Verifica se o cliente em entregas_aberto existe
     cursor.execute('SELECT cod_cliente FROM entregas_aberto WHERE cod_cliente = ?', (cod_cliente,))
     result_cliente = cursor.fetchone()
@@ -285,7 +291,7 @@ def adicionar_entregador_rota(cod_cliente, cod_entregador):
         print("O entregador com o código fornecido não existe.")
     else:
         # Recupera as informações do cliente em entregas_aberto
-        cursor.execute('SELECT nome_cliente, bairro_cliente , cod_entrega FROM entregas_aberto WHERE cod_cliente = ?', (cod_cliente,))
+        cursor.execute('SELECT nome_cliente, bairro_cliente , cod_entrega, cod_cliente FROM entregas_aberto WHERE cod_cliente = ?', (cod_cliente,))
         entrega_info = cursor.fetchone()
 
         # Recupera as informações do entregador em entregadores
@@ -299,7 +305,7 @@ def adicionar_entregador_rota(cod_cliente, cod_entregador):
         horario_saida = obter_horario_atual()
         
          # Insere a entrega em rota com o entregador e o horário de saída
-        cursor.execute('INSERT INTO entregas_rota (cod_entrega, cod_entregador, nome_cliente, bairro,telefone_entregador, entregador, data_entrega, horário_saida) VALUES (?,?,?,?,?,?,?,?)', (entrega_info[2], cod_entregador, entrega_info[0], entrega_info[1],entregador_info[1], entregador_info[0],data_entrega, horario_saida))
+        cursor.execute('INSERT INTO entregas_rota (cod_entrega, cod_entregador, nome_cliente, bairro,telefone_entregador, entregador, data_entrega, horário_saida,cod_cliente) VALUES (?,?,?,?,?,?,?,?,?)', (entrega_info[2], cod_entregador, entrega_info[0], entrega_info[1],entregador_info[1], entregador_info[0],data_entrega, horario_saida,entrega_info[3]))
 
         #exclui entrega em aberto quando vai para entregas em rota
         excluir_entrega_aberto_rota(entrega_info[2])
@@ -375,14 +381,14 @@ def adicionar_entregas_finalizadas(cod_entrega):
     
     else:
         # Recupera as informações da entrega em entregas_rota
-        cursor.execute('SELECT cod_entrega,cod_entregador, nome_cliente, bairro,telefone_entregador, Entregador, data_entrega, horário_saida FROM entregas_rota WHERE cod_entrega = ?', (cod_entrega,))
+        cursor.execute('SELECT cod_entrega,cod_entregador, nome_cliente, bairro,telefone_entregador, Entregador, data_entrega, horário_saida, cod_cliente FROM entregas_rota WHERE cod_entrega = ?', (cod_entrega,))
         entrega_rota_info = cursor.fetchone()
 
         # Obtém o horário atual
         horario_chegada = obter_horario_atual()
         
         # Insere a entrega em rota com o entregador e o horário de saída
-        cursor.execute('INSERT INTO entregas_finalizadas (cod_entrega, cod_entregador, nome_cliente, bairro,telefone_entregador, entregador, data_entrega, horário_saida, horário_chegada) VALUES (?,?,?,?,?,?,?,?,?)', (entrega_rota_info[0], entrega_rota_info[1], entrega_rota_info[2], entrega_rota_info[3],entrega_rota_info[4], entrega_rota_info[5],entrega_rota_info[6], entrega_rota_info[7], horario_chegada))
+        cursor.execute('INSERT INTO entregas_finalizadas (cod_entrega, cod_entregador, nome_cliente, bairro,telefone_entregador, entregador, data_entrega, horário_saida, horário_chegada,cod_cliente) VALUES (?,?,?,?,?,?,?,?,?,?)', (entrega_rota_info[0], entrega_rota_info[1], entrega_rota_info[2], entrega_rota_info[3],entrega_rota_info[4], entrega_rota_info[5],entrega_rota_info[6], entrega_rota_info[7], horario_chegada,entrega_rota_info[8]))
 
 
         #criar método de analizar cod entrega na tabela entregas em rota e apagar a entrega da tabela anterior
@@ -395,80 +401,163 @@ def adicionar_entregas_finalizadas(cod_entrega):
 
         print("Entrega finalizada com sucesso.")
 
+def pesquisa_por_data(data_entrega):
+    
+    limpa_terminal()
+    print("Entregas finalizadas:")
+    print("*" * 50)
+    
+    # Executa a consulta SELECT com a cláusula WHERE para filtrar por data de entrega
+    cursor.execute('SELECT * FROM entregas_finalizadas WHERE data_entrega = ?', (data_entrega,))
+    registros = cursor.fetchall()
+
+    for registro in registros:
+        print(registro)
+    print("*" * 50)
+
+def pesquisa_data_entregador(entregador, data_entrega ):
+    
+    limpa_terminal()
+    print("*" * 50)
+
+    # Executa a consulta SELECT com a cláusula WHERE para filtrar por data de entrega e cod_entregador
+    cursor.execute('SELECT * FROM entregas_finalizadas WHERE data_entrega = ? AND cod_entregador = ?', (data_entrega,entregador))
+    registros = cursor.fetchall()
+    
+    for registro in registros:
+        print(registro)
+    print("*" * 50)
 
 while True:
-    selecao = input(""" Opções:
-                    [1] Adicionar Cliente
-                    [2] Adicionar Entregador
-                    [3] Exibir Clientes
-                    [4] Exibir Entregadores
-                    [5] Deletar Cliente
-                    [6] Deletar Entregador
-                    [7] Adicionar Entregas em Aberto 
-                    [8] Adicionar Entregas em Rota 
-                    [9] Adicionar Entregas finalizadas   
-                    [10] Exibir ♀Entregas finalizadas  
-                    [11] Exibir Entregas Em Aberto
-                    [12] Deletar Entrega Em Aberto
-                    [13] Deletar Entregas Em Rota
-                    [14] Exibir Entregas Em Rota
-                    [15] 
-                    [16] Sair
-                    digite a opção: """)
+
+    selecao = input("""Opções:
+                    [1] Adicionar
+                    [2] Deletar
+                    [3] Exibir
+                    [4] Pesquisar
+                    [5] Sair
+                    Digite a opção: """)
     
-    if selecao == "1": # adiciona clientes
-        add_clientes()
+    if selecao =="1":
+        opções_Adicionar = input("""Opções Adicionar:
+                                 
+                                 [1] Adicionar Cliente
+                                 [2] Adicionar entregador
+                                 [3] Adicionar Entregas em Aberto
+                                 [4] Adicionar Entregas em Rota
+                                 [5] Adicionar Entregas Finalizadas 
+                                 [6] Sair
+                                 Digite a opção: """)
+        
+        if opções_Adicionar == "1":
+                add_clientes()
+        
+        if opções_Adicionar == "2":
+            add_entregadores()
+        
+        if opções_Adicionar == "3":
+            add_entregas_aberto()
+        
+        if opções_Adicionar == "4":
+            exibir_entregas_aberto()
+            codigo_cliente = input("Digite o código do cliente da entrega selecionada: ")
+            codigo_entregador = input("Digite o código do entregador: ")
+            adicionar_entregador_rota(int(codigo_cliente), int(codigo_entregador))
+        
+        if opções_Adicionar == "5":
+            cod_entrega_a_finalizar = input("digite o códico da entrega para finalizar: ")
+            adicionar_entregas_finalizadas(cod_entrega_a_finalizar)
+        
+        if opções_Adicionar == "6":
+            break
 
-    if selecao =="2": # adiciona entregadores
-        add_entregadores()
+    if selecao == "2":
+        opções_deletar = input("""Opções Deletar:
+                               
+                                 [1] Deletar Cliente
+                                 [2] Deletar Entregador
+                                 [3] Deletar Entrega Em Aberto
+                                 [4] Deletar Entregas Em Rota
+                                 [5] Sair
+                                Digite a opção: """)
+        if opções_deletar == "1":
+            id_cliente_a_deletar = input("Digite o código do cliente a ser deletado: ")
+            delete_cliente(id_cliente_a_deletar)   
+
+        if opções_deletar == "2":
+            id_entregador_a_deletar = input("Digite o código do entregador a ser deletado: ")
+            delete_entregador(id_entregador_a_deletar)  
+
+        if opções_deletar == "3":
+            limpa_terminal()
+            cod_entrega_aberto = input("Digite o código do cliente que deseja deletar a entrega em aberto: ")
+            delete_entregas_aberto(cod_entrega_aberto)
+
+        if opções_deletar == "4":
+            cod_entrega_rota = input("Digite o código da entrega que deseja deletar de entregas em rota: ")
+            delete_entregas_rota(cod_entrega_rota)
+        
+        if opções_deletar == "5":
+            break
+
+    if selecao == "3":
+        opções_Exibir = input("""Opções Exibir:
+                                 
+                                 [1] Exibir Cliente
+                                 [2] Exibir entregador
+                                 [3] Exibir Entregas em Aberto
+                                 [4] Exibir Entregas em Rota
+                                 [5] Exibir Entregas Finalizadas 
+                                 [6] Sair
+                                 Digite a opção: """)
+        if opções_Exibir == "1":
+            exibir_clientes()
+        
+        if opções_Exibir == "2":
+            exibir_entregadores()
+        
+        if opções_Exibir == "3":
+             exibir_entregas_aberto()
+        
+        if opções_Exibir == "4":
+            exibir_entregas_rota()
+        
+        if opções_Exibir == "5":
+            exibir_entregas_finalizadas()
+
+        if opções_Exibir == "6":
+            break
     
-    if selecao == "3": # exibe clientes
-        exibir_clientes()
-    
-    if selecao == "4": # exibe entregadores
-        exibir_entregadores()
-    
-    if selecao == "5": # deleta cliente
-        id_cliente_a_deletar = input("Digite o código do cliente a ser deletado: ")
-        delete_cliente(id_cliente_a_deletar)
+    if selecao == "4":
+        opções_pesquisa= input("""Opções pesquisa:
+                                 
+                                 [1] Pesquisa Entragas Finalizadas Por Data
+                                 [2] Pesquisa Entregas Finalizadas Por Data E Entregador
+                                 [3] Pesquisa Data Hoje
+                                 [4] Sair
+                                 Digite a opção: """)
+        if opções_pesquisa == "1":
+            data_pesquisa = input("Digite a data que deseja pesquisar (AAAA-MM-DD): ")
+            pesquisa_por_data(data_pesquisa)
+        
+        if opções_pesquisa == "2":
+            entregador_pesquisa = input("digite o código do entregador que deseja pesquisar: ")
+            data_pesquisa1 = input("Digite a data que deseja pesquisar (AAAA-MM-DD): ")
+            
+            try:
+                pesquisa_data_entregador(entregador_pesquisa, data_pesquisa1)
+            except Exception as e:
+                print(f"Ocorreu um erro na pesquisa: {e}")
+        
+        if opções_pesquisa == "3":
+            data_hoje = datetime.date.today().isoformat()
+            pesquisa_por_data(data_hoje)
 
-    if selecao == "6": # deleta entregador
-        id_entregador_a_deletar = input("Digite o código do entregador a ser deletado: ")
-        delete_entregador(id_entregador_a_deletar)
-    
-    if selecao == "7": # entregas em aberto
-        add_entregas_aberto ()
+        if opções_pesquisa == "4":
+            break
 
-
-    if selecao == "8": # entregas em rota
-        exibir_entregas_aberto()
-        codigo_cliente = input("Digite o código do cliente da entrega selecionada: ")
-        codigo_entregador = input("Digite o código do entregador: ")
-        adicionar_entregador_rota(int(codigo_cliente), int(codigo_entregador))
-
-    if selecao == "9": # adicionar entregas
-        cod_entrega_a_finalizar = input("digite o códico da entrega para finalizar: ")
-        adicionar_entregas_finalizadas(cod_entrega_a_finalizar)
-
-    if selecao == "10": #entregas finalizadas
-        exibir_entregas_finalizadas()
-
-    if selecao == "11": #exibir entregas em aberto
-        exibir_entregas_aberto()
-
-    if selecao == "12": #deletar entregas em aberto
-        cod_entrega_aberto = input("Digite o código do cliente que deseja deletar a entrega em aberto: ")
-        delete_entregas_aberto(cod_entrega_aberto)  
-
-    if selecao == "13": #deletar entregas em rota
-        cod_entrega_rota = input("Digite o código da entrega que deseja deletar de entregas em rota: ")
-        delete_entregas_rota(cod_entrega_rota)  
-    
-    if selecao == "14": # exibe entregas em rota 
-        exibir_entregas_rota()
-
-    elif selecao == "16":  # sair 
-        break
+    if selecao == "5":
+        break    
 
 # Fecha a conexão
 conexao.close()

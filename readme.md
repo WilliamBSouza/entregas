@@ -10,7 +10,18 @@ Dia 20-06-2023 erro em desconectar bd linha 261
 
 Reiniciei o projeto dia 10-07-2023 com apenas um banco de dados. 
 
+Projeto backend finalizado! 18-07-2023
+
+início do projeto frontend dia 19-07-2023
 
 LEMBRETES:
-adicionar a data da entrega apenas em entregas finalizadas pois no cod da entrega já mostra a data que a entrega foi criada 
+
+adicionar projeto frontend
+
+ 1 fazer layout do projeto antes de iniciar. 
+ 2 criar as separações de edição, funções e entregas aberto, em rota e finalizadas 
+ 3 criar funções para adicionar entregas em aberto 
+ 4 criar funções para adicionar entregas rota 
+ 5 criar funções para adicionar entregas finalizadas 
+ 6 criar botões e adicionar as devidas funções no mesmo
 

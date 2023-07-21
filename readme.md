@@ -16,6 +16,9 @@ início do projeto frontend dia 19-07-2023
 
 LEMBRETES:
 
+# dia 20/07/2023  Estudando formas de melhorar o layout do sistema. 
+# incluindo menus com cascatas ...  
+
 ADICIONAR BOTÕES EM TODAS JANELAS E APÓS ISSO CRIAR AS INTERFÁCIES PARA CADA COMANDO...
 
 adicionar projeto frontend

@@ -6,8 +6,10 @@ import datetime
 import time
 
 def obter_horario_atual():
-    horario_atual = datetime.now().strftime("%H:%M:%S")
-    return horario_atual
+    horario_atual = datetime.datetime.now()
+    horario_formatado = horario_atual.strftime("%H:%M:%S")
+
+    return horario_formatado
 
 # Função para obter a data atual para cod unico
 def data_cod_unico():
@@ -47,6 +49,21 @@ cursor = conexao.cursor()
 #cursor.execute('CREATE TABLE entregas_finalizadas (cod_entrega INT PRIMARY KEY, cod_entregador INT, nome_cliente , bairro , telefone_entregador, Entregador, data_entrega, horário_saida, horário_chegada)')
 #cursor.execute('ALTER TABLE entregas_rota ADD COLUMN cod_cliente INT')
 #cursor.execute('ALTER TABLE entregas_finalizadas ADD COLUMN cod_cliente INT')
+
+################################################################################################################################################
+                           #TESTE       TESTE                    TESTE
+
+
+def pesquisa_por_data_hoje():
+        data_hoje = datetime.date.today().isoformat()
+        pesquisa_por_data(data_hoje)
+
+
+################################################################################################################################################
+
+
+
+
 
 def add_clientes():
 
@@ -565,4 +582,4 @@ while False:  # False para servir apenas como base para o FRONTEND
         break    
 
 # Fecha a conexão
-conexao.close()
+#conexao.close()

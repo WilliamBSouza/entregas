@@ -18,6 +18,7 @@ LEMBRETES:
 
 # dia 20/07/2023  Estudando formas de melhorar o layout do sistema. 
 # incluindo menus com cascatas ...  
+# tentarivas falhas de adicionar as lista 
 
 ADICIONAR BOTÕES EM TODAS JANELAS E APÓS ISSO CRIAR AS INTERFÁCIES PARA CADA COMANDO...
 

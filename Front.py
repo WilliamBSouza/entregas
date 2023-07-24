@@ -11,6 +11,38 @@ cor2 = "#3fb5a3"  # verde / green
 cor3 = "#38576b"  # valor / value
 cor4 = "#403d3d"   # letra / letters
 
+
+
+def pesquisa_data_e_entregador_janela():
+    
+    root = tk.Tk()
+    root.title("Pesquisa Por Data E Entregador")
+    root.geometry("500x250")
+
+    botão_Pesquisar = Button(root,text= "pesquisar",command=pesquisa_data_e_entregador,width= 39, height=2,font=("Arial 8 bold"),bg=cor2, fg=cor1,relief=RAISED, overrelief=RIDGE)
+    botão_Pesquisar.place(x=100, y=200)
+
+
+    conexao = sqlite3.connect('entregas.db')
+    cursor = conexao.cursor()
+
+
+    conexao.close()
+
+def pesquisa_data_e_entregador():
+    entregador_pesquisa = input("digite o código do entregador que deseja pesquisar: ")
+    data_pesquisa1 = input("Digite a data que deseja pesquisar (AAAA-MM-DD): ")
+            
+    try:
+        pesquisa_data_entregador(entregador_pesquisa, data_pesquisa1)
+       
+    except Exception as e:
+        print(f"Ocorreu um erro na pesquisa: {e}")
+
+def pesquisa_Finalizadas_data ():
+    data_pesquisa = input("Digite a data que deseja pesquisar (AAAA-MM-DD): ")
+    pesquisa_por_data(data_pesquisa)
+
 def pesquisa_por_data_hoje():
         data_hoje = datetime.date.today().isoformat()
         pesquisa_por_data(data_hoje)
@@ -68,7 +100,9 @@ menu_editar = criar_submenu(barra_menu, {
 
 menu_pesquisa = criar_submenu(barra_menu, {
     "Pesquisa Entregas De Hoje": pesquisa_por_data_hoje,
-   
+    "Pesquisa Entregas Por Data": pesquisa_Finalizadas_data,
+    "Pesquisa Entregas Data E Entregador": pesquisa_data_e_entregador_janela
+
 })
 
 

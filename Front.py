@@ -2,6 +2,7 @@ from tkinter import *
 from main import *
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import ttk
 import sqlite3
 #cores
 
@@ -20,7 +21,36 @@ def pesquisa_data_e_entregador_janela():
     root.geometry("500x250")
 
     botão_Pesquisar = Button(root,text= "pesquisar",command=pesquisa_data_e_entregador,width= 39, height=2,font=("Arial 8 bold"),bg=cor2, fg=cor1,relief=RAISED, overrelief=RIDGE)
-    botão_Pesquisar.place(x=100, y=200)
+    botão_Pesquisar.place(relx=0.01 , rely=0,relwidth=0.04, relheight=0.85)
+
+
+    listacli = ttk.Treeview(root, height= 3, column=("col1","col2","col3","col4","col5","col6","col7"))
+    listacli.heading("#0" , text="Cod. Entrega") #colocando os cabeçalhos das colunas
+    listacli.heading("#1" , text="Cod. cliente") #colocando os cabeçalhos das colunas
+    listacli.heading("#2", text="Nome Cliente")
+    listacli.heading("#3", text="Nome Bairro")
+    listacli.heading("#4", text="Entregador")
+    listacli.heading("#5", text="Data Entrega")
+    listacli.heading("#6", text="Horário Saida")
+    listacli.heading("#7", text="Horário Chegada")
+
+        #colocando o tamanho das colunas
+    #o tamanho da coluna é dividida em 500 onde 50 seria 10% da tela
+    listacli.column("#0", width=50)
+    listacli.column("#1", width=50)
+    listacli.column("#2", width=200)
+    listacli.column("#3", width=125)
+    listacli.column("#4", width=125)
+    listacli.column("#5", width=50)
+    listacli.column("#6", width=200)
+    listacli.column("#7", width=125)
+   
+
+    listacli.place(relx=0.01, rely=0.1 , relwidth=0.95, relheight=0.85)
+
+    scrollista = Scrollbar(root, orient="vertical")
+    listacli.configure(yscroll=scrollista.set)
+    scrollista.place(relx=0.96 , rely=0.1,relwidth=0.04, relheight=0.85)
 
 
     conexao = sqlite3.connect('entregas.db')

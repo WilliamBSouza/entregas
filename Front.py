@@ -14,50 +14,66 @@ cor4 = "#403d3d"   # letra / letters
 
 
 
-def pesquisa_data_e_entregador_janela():
+def todas_entregas_finalizadas():
+    
+ #   def ondoubleclick( event):      mexer mais a frente com este código 
+ #       tab_entregas.selection()
+        
+    def select_lista(tab_entregas, cursor, conexao):  
+        for item in tab_entregas.get_children()[1:]:
+            tab_entregas.delete(item)
+
+        lista = cursor.execute("""SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada FROM entregas_finalizadas ORDER BY data_entrega ASC; """)
+
+        for row in lista:
+            tab_entregas.insert("", tk.END, values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
+
+            #tab_entregas.set(tab_entregas.get_children()[-1], "#0", row[0])
     
     root = tk.Tk()
     root.title("Pesquisa Por Data E Entregador")
-    root.geometry("500x250")
-
-    botão_Pesquisar = Button(root,text= "pesquisar",command=pesquisa_data_e_entregador,width= 39, height=2,font=("Arial 8 bold"),bg=cor2, fg=cor1,relief=RAISED, overrelief=RIDGE)
-    botão_Pesquisar.place(relx=0.01 , rely=0,relwidth=0.04, relheight=0.85)
+    root.geometry("1000x500")
 
 
-    listacli = ttk.Treeview(root, height= 3, column=("col1","col2","col3","col4","col5","col6","col7"))
-    listacli.heading("#0" , text="Cod. Entrega") #colocando os cabeçalhos das colunas
-    listacli.heading("#1" , text="Cod. cliente") #colocando os cabeçalhos das colunas
-    listacli.heading("#2", text="Nome Cliente")
-    listacli.heading("#3", text="Nome Bairro")
-    listacli.heading("#4", text="Entregador")
-    listacli.heading("#5", text="Data Entrega")
-    listacli.heading("#6", text="Horário Saida")
-    listacli.heading("#7", text="Horário Chegada")
+    tab_entregas = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8"))
+
+    tab_entregas.heading("#0" , text="") #colocando os cabeçalhos das colunas
+    tab_entregas.heading("#1" , text="Cod. Entrega") 
+    tab_entregas.heading("#2" , text="Cod. cliente") 
+    tab_entregas.heading("#3", text="Cliente")
+    tab_entregas.heading("#4", text="Bairro")
+    tab_entregas.heading("#5", text="Entregador")
+    tab_entregas.heading("#6", text="Data Entrega")
+    tab_entregas.heading("#7", text="Horário Saida")
+    tab_entregas.heading("#8", text="Horário Chegada")
 
         #colocando o tamanho das colunas
     #o tamanho da coluna é dividida em 500 onde 50 seria 10% da tela
-    listacli.column("#0", width=50)
-    listacli.column("#1", width=50)
-    listacli.column("#2", width=200)
-    listacli.column("#3", width=125)
-    listacli.column("#4", width=125)
-    listacli.column("#5", width=50)
-    listacli.column("#6", width=200)
-    listacli.column("#7", width=125)
+    tab_entregas.column("#0", width=10)
+    tab_entregas.column("#1", width=100)
+    tab_entregas.column("#2", width=50)
+    tab_entregas.column("#3", width=200)
+    tab_entregas.column("#4", width=125)
+    tab_entregas.column("#5", width=100)
+    tab_entregas.column("#6", width=50)
+    tab_entregas.column("#7", width=50)
+    tab_entregas.column("#8", width=50)
    
 
-    listacli.place(relx=0.01, rely=0.1 , relwidth=0.95, relheight=0.85)
+    tab_entregas.place(relx=0.01, rely=0.1 , relwidth=0.95, relheight=0.85)
 
     scrollista = Scrollbar(root, orient="vertical")
-    listacli.configure(yscroll=scrollista.set)
+    tab_entregas.configure(yscroll=scrollista.set)
     scrollista.place(relx=0.96 , rely=0.1,relwidth=0.04, relheight=0.85)
-
 
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
 
+    select_lista(tab_entregas, cursor, conexao)  # Passa o tab_entregas, cursor e conexao como argumentos
 
     conexao.close()
+
+    root.mainloop()
 
 def pesquisa_data_e_entregador():
     entregador_pesquisa = input("digite o código do entregador que deseja pesquisar: ")
@@ -131,7 +147,8 @@ menu_editar = criar_submenu(barra_menu, {
 menu_pesquisa = criar_submenu(barra_menu, {
     "Pesquisa Entregas De Hoje": pesquisa_por_data_hoje,
     "Pesquisa Entregas Por Data": pesquisa_Finalizadas_data,
-    "Pesquisa Entregas Data E Entregador": pesquisa_data_e_entregador_janela
+    "Pesquisa Entregas Data E Entregador": print("entregas por data e entregador"),
+    "Todas Entregas Finalizadas": todas_entregas_finalizadas
 
 })
 

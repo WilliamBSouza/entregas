@@ -14,6 +14,9 @@ Projeto backend finalizado! 18-07-2023
 
 início do projeto frontend dia 19-07-2023
 
+
+foi adicionada a tabela em todas entregas finalizadas que antes estava em  pesquisa de entregas finalizadas por data e entregador
+
 LEMBRETES:
 
 
@@ -22,11 +25,12 @@ adicionar as funções nos botões da cascata
 
 
 
+
 ADICIONAR BOTÕES EM TODAS JANELAS E APÓS ISSO CRIAR AS INTERFÁCIES PARA CADA COMANDO...
 
 adicionar projeto frontend
 
- 1 fazer layout do projeto antes de iniciar. 
+ 1 fazer layout do projeto antes de iniciar. ok
  2 criar as separações de edição, funções e entregas aberto, em rota e finalizadas 
  3 criar funções para adicionar entregas em aberto 
  4 criar funções para adicionar entregas rota 

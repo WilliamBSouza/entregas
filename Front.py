@@ -28,10 +28,10 @@ def todas_entregas_finalizadas():
         for row in lista:
             tab_entregas.insert("", tk.END, values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
 
-            #tab_entregas.set(tab_entregas.get_children()[-1], "#0", row[0])
+           
     
     root = tk.Tk()
-    root.title("Pesquisa Por Data E Entregador")
+    root.title("Todas Entregas Finalizadas")
     root.geometry("1000x500")
 
 
@@ -70,6 +70,69 @@ def todas_entregas_finalizadas():
     cursor = conexao.cursor()
 
     select_lista(tab_entregas, cursor, conexao)  # Passa o tab_entregas, cursor e conexao como argumentos
+
+    conexao.close()
+
+    root.mainloop()
+
+
+def pesquisa_data_e_entregador_janela():
+    
+ #   def ondoubleclick( event):      mexer mais a frente com este código 
+ #       tab_entregas.selection()
+        
+    def select_lista(tab_pesquisa_data_entregador, cursor, conexao):  
+        for item in tab_pesquisa_data_entregador.get_children()[1:]:
+            tab_pesquisa_data_entregador.delete(item)
+        data = input("digite a data desejada: ")
+        entregador = input("digite o entregador desejado")    #arrumar bug linha de baixo   89
+        lista = cursor.execute(f"""SELECT  cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada FROM entregas_finalizadas WHERE data_entrega = {data} AND entregador ={entregador} ORDER BY horário_chegada ASC; """)
+
+        for row in lista:
+            tab_pesquisa_data_entregador.insert("", tk.END, values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
+
+           
+    
+    root = tk.Tk()
+    root.title("Pesquisa Entregas Finalizadas Data Entregador")
+    root.geometry("1000x500")
+
+
+    tab_pesquisa_data_entregador = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8"))
+
+    tab_pesquisa_data_entregador.heading("#0" , text="") #colocando os cabeçalhos das colunas
+    tab_pesquisa_data_entregador.heading("#1" , text="Cod. Entrega") 
+    tab_pesquisa_data_entregador.heading("#2" , text="Cod. cliente") 
+    tab_pesquisa_data_entregador.heading("#3", text="Cliente")
+    tab_pesquisa_data_entregador.heading("#4", text="Bairro")
+    tab_pesquisa_data_entregador.heading("#5", text="Entregador")
+    tab_pesquisa_data_entregador.heading("#6", text="Data Entrega")
+    tab_pesquisa_data_entregador.heading("#7", text="Horário Saida")
+    tab_pesquisa_data_entregador.heading("#8", text="Horário Chegada")
+
+        #colocando o tamanho das colunas
+    #o tamanho da coluna é dividida em 500 onde 50 seria 10% da tela
+    tab_pesquisa_data_entregador.column("#0", width=10)
+    tab_pesquisa_data_entregador.column("#1", width=100)
+    tab_pesquisa_data_entregador.column("#2", width=50)
+    tab_pesquisa_data_entregador.column("#3", width=200)
+    tab_pesquisa_data_entregador.column("#4", width=125)
+    tab_pesquisa_data_entregador.column("#5", width=100)
+    tab_pesquisa_data_entregador.column("#6", width=50)
+    tab_pesquisa_data_entregador.column("#7", width=50)
+    tab_pesquisa_data_entregador.column("#8", width=50)
+   
+
+    tab_pesquisa_data_entregador.place(relx=0.01, rely=0.1 , relwidth=0.95, relheight=0.85)
+
+    scrollista = Scrollbar(root, orient="vertical")
+    tab_pesquisa_data_entregador.configure(yscroll=scrollista.set)
+    scrollista.place(relx=0.96 , rely=0.1,relwidth=0.04, relheight=0.85)
+
+    conexao = sqlite3.connect('entregas.db')
+    cursor = conexao.cursor()
+
+    select_lista(tab_pesquisa_data_entregador, cursor, conexao)  # Passa o tab_entregas, cursor e conexao como argumentos
 
     conexao.close()
 
@@ -147,7 +210,7 @@ menu_editar = criar_submenu(barra_menu, {
 menu_pesquisa = criar_submenu(barra_menu, {
     "Pesquisa Entregas De Hoje": pesquisa_por_data_hoje,
     "Pesquisa Entregas Por Data": pesquisa_Finalizadas_data,
-    "Pesquisa Entregas Data E Entregador": print("entregas por data e entregador"),
+    "Pesquisa Entregas Data E Entregador": pesquisa_data_e_entregador_janela,
     "Todas Entregas Finalizadas": todas_entregas_finalizadas
 
 })

@@ -19,11 +19,13 @@ def todas_entregas_finalizadas():
  #   def ondoubleclick( event):      mexer mais a frente com este código 
  #       tab_entregas.selection()
         
-    def select_lista(tab_entregas, cursor, conexao):  
+    def selecionar_lista(tab_entregas, cursor, conexao):  
         for item in tab_entregas.get_children()[1:]:
             tab_entregas.delete(item)
 
-        lista = cursor.execute("""SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada FROM entregas_finalizadas ORDER BY data_entrega ASC; """)
+        lista = cursor.execute("""SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada 
+                               FROM entregas_finalizadas 
+                               ORDER BY data_entrega ASC; """)
 
         for row in lista:
             tab_entregas.insert("", tk.END, values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
@@ -49,7 +51,7 @@ def todas_entregas_finalizadas():
 
         #colocando o tamanho das colunas
     #o tamanho da coluna é dividida em 500 onde 50 seria 10% da tela
-    tab_entregas.column("#0", width=10)
+    tab_entregas.column("#0", width=0)
     tab_entregas.column("#1", width=100)
     tab_entregas.column("#2", width=50)
     tab_entregas.column("#3", width=200)
@@ -69,34 +71,78 @@ def todas_entregas_finalizadas():
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
 
-    select_lista(tab_entregas, cursor, conexao)  # Passa o tab_entregas, cursor e conexao como argumentos
+    selecionar_lista(tab_entregas, cursor, conexao)  # Passa o tab_entregas, cursor e conexao como argumentos
 
     conexao.close()
 
     root.mainloop()
 
+def lista_selecao_entregador(event):
+    
+    if lista.curselection():  # Verifica se há alguma seleção
+        index = lista.curselection()[0]
+        item_selecionado = lista.get(index)
+        return item_selecionado
+
+    else:
+        print("não tem nada selecionado")
+
+def select_lista(tab_pesquisa_data_entregador, cursor, conexao,data_entry):
+    tab_pesquisa_data_entregador.delete(*tab_pesquisa_data_entregador.get_children())
+
+    data = data_entry.get()  # Obtém a data digitada no Entry
+    entregador = lista.get(lista.curselection())  # Obtém o nome do entregador selecionado na lista
+
+    # Utilizando parâmetros na consulta SQL
+    cursor.execute("""
+        SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada
+        FROM entregas_finalizadas
+        WHERE data_entrega = ? AND entregador = ?
+        ORDER BY horário_chegada ASC;
+    """, (data, entregador))
+
+    lista_entregas = cursor.fetchall()
+
+    for row in lista_entregas:
+        tab_pesquisa_data_entregador.insert("", tk.END, values=row) 
 
 def pesquisa_data_e_entregador_janela():
-    
- #   def ondoubleclick( event):      mexer mais a frente com este código 
- #       tab_entregas.selection()
-        
-    def select_lista(tab_pesquisa_data_entregador, cursor, conexao):  
-        for item in tab_pesquisa_data_entregador.get_children()[1:]:
-            tab_pesquisa_data_entregador.delete(item)
-        data = input("digite a data desejada: ")
-        entregador = input("digite o entregador desejado")    #arrumar bug linha de baixo   89
-        lista = cursor.execute(f"""SELECT  cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada FROM entregas_finalizadas WHERE data_entrega = {data} AND entregador ={entregador} ORDER BY horário_chegada ASC; """)
 
-        for row in lista:
-            tab_pesquisa_data_entregador.insert("", tk.END, values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
+    #CRIANDO A LISTA PARA SELECIONAR ENTREGADORES 
 
-           
-    
+    conexao = sqlite3.connect('entregas.db')
+    cursor = conexao.cursor()
+    cursor.execute('SELECT * FROM Entregadores')
+    dados_do_banco = cursor.fetchall()
+   
     root = tk.Tk()
     root.title("Pesquisa Entregas Finalizadas Data Entregador")
-    root.geometry("1000x500")
+    root.geometry("1200x500")
 
+    conexao = sqlite3.connect('entregas.db')
+    cursor = conexao.cursor()
+
+    # Criando uma lista com os nomes dos entregadores para exibir no Listbox
+    cursor.execute('SELECT nome FROM Entregadores')
+    dados_do_banco = cursor.fetchall()
+
+    #adiciona lista selecionável
+    global lista
+    lista = tk.Listbox(root, selectmode=tk.SINGLE)
+    lista.place(x=1, y= 1)
+
+    for item in dados_do_banco:
+        lista.insert(tk.END, item[0])
+      
+       # Adicionando um Entry para obter a data desejada
+    global data_entry
+    data_entry = tk.Entry(root)
+    data_entry.place(x=150, y=1)
+
+    btn_pesquisar = tk.Button(root, text="Pesquisar", command=lambda: select_lista(tab_pesquisa_data_entregador, cursor, conexao,data_entry))
+    btn_pesquisar.place(x=300, y=1 )  
+    
+    lista.bind('<<ListboxSelect>>', lista_selecao_entregador)
 
     tab_pesquisa_data_entregador = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8"))
 
@@ -112,7 +158,7 @@ def pesquisa_data_e_entregador_janela():
 
         #colocando o tamanho das colunas
     #o tamanho da coluna é dividida em 500 onde 50 seria 10% da tela
-    tab_pesquisa_data_entregador.column("#0", width=10)
+    tab_pesquisa_data_entregador.column("#0", width=0)
     tab_pesquisa_data_entregador.column("#1", width=100)
     tab_pesquisa_data_entregador.column("#2", width=50)
     tab_pesquisa_data_entregador.column("#3", width=200)
@@ -132,7 +178,7 @@ def pesquisa_data_e_entregador_janela():
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
 
-    select_lista(tab_pesquisa_data_entregador, cursor, conexao)  # Passa o tab_entregas, cursor e conexao como argumentos
+    select_lista(tab_pesquisa_data_entregador, cursor, conexao,data_entry)  # Passa o tab_entregas, cursor e conexao como argumentos
 
     conexao.close()
 

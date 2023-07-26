@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 import sqlite3
+from tkcalendar import Calendar, DateEntry 
 #cores
 
 cor0 = "#f0f3f5"  # Preta / black
@@ -108,7 +109,11 @@ def select_lista(tab_pesquisa_data_entregador, cursor, conexao,data_entry):
 
 def pesquisa_data_e_entregador_janela():
 
-    #CRIANDO A LISTA PARA SELECIONAR ENTREGADORES 
+    def on_pesquisar():
+        # Chamar a função select_lista aqui para executar a pesquisa
+        select_lista(tab_pesquisa_data_entregador, cursor, conexao, data_entry)
+
+     
 
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
@@ -136,10 +141,10 @@ def pesquisa_data_e_entregador_janela():
       
        # Adicionando um Entry para obter a data desejada
     global data_entry
-    data_entry = tk.Entry(root)
+    data_entry = DateEntry(root, date_pattern='yyyy-mm-dd')
     data_entry.place(x=150, y=1)
 
-    btn_pesquisar = tk.Button(root, text="Pesquisar", command=lambda: select_lista(tab_pesquisa_data_entregador, cursor, conexao,data_entry))
+    btn_pesquisar = tk.Button(root, text="Pesquisar", command= on_pesquisar)
     btn_pesquisar.place(x=300, y=1 )  
     
     lista.bind('<<ListboxSelect>>', lista_selecao_entregador)
@@ -159,17 +164,17 @@ def pesquisa_data_e_entregador_janela():
         #colocando o tamanho das colunas
     #o tamanho da coluna é dividida em 500 onde 50 seria 10% da tela
     tab_pesquisa_data_entregador.column("#0", width=0)
-    tab_pesquisa_data_entregador.column("#1", width=100)
-    tab_pesquisa_data_entregador.column("#2", width=50)
-    tab_pesquisa_data_entregador.column("#3", width=200)
-    tab_pesquisa_data_entregador.column("#4", width=125)
-    tab_pesquisa_data_entregador.column("#5", width=100)
+    tab_pesquisa_data_entregador.column("#1", width=80)
+    tab_pesquisa_data_entregador.column("#2", width=30)
+    tab_pesquisa_data_entregador.column("#3", width=150)
+    tab_pesquisa_data_entregador.column("#4", width=90)
+    tab_pesquisa_data_entregador.column("#5", width=90)
     tab_pesquisa_data_entregador.column("#6", width=50)
     tab_pesquisa_data_entregador.column("#7", width=50)
     tab_pesquisa_data_entregador.column("#8", width=50)
    
 
-    tab_pesquisa_data_entregador.place(relx=0.01, rely=0.1 , relwidth=0.95, relheight=0.85)
+    tab_pesquisa_data_entregador.place(relx=0.11, rely=0.10 , relwidth=0.85, relheight=0.85)
 
     scrollista = Scrollbar(root, orient="vertical")
     tab_pesquisa_data_entregador.configure(yscroll=scrollista.set)

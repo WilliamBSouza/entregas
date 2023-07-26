@@ -19,7 +19,7 @@ foi adicionada a tabela em todas entregas finalizadas que antes estava em  pesqu
 
 LEMBRETES:
 
-
+editar a tabela em entregas finalizadas por entregador e data para aparecer a lista selecionável
 #criar a função editar clientes e entregador no backend
 adicionar as funções nos botões da cascata
 

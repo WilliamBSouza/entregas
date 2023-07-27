@@ -28,8 +28,6 @@ def todas_entregas_finalizadas():
 
         for row in lista:
             tab_entregas.insert("", tk.END, values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
-
-           
     
     root = tk.Tk()
     root.title("Todas Entregas Finalizadas")
@@ -37,7 +35,6 @@ def todas_entregas_finalizadas():
 
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
-
 
     tab_entregas = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8"))
 
@@ -63,16 +60,13 @@ def todas_entregas_finalizadas():
     tab_entregas.column("#7", width=50)
     tab_entregas.column("#8", width=50)
    
-
     tab_entregas.place(relx=0.01, rely=0.1 , relwidth=0.95, relheight=0.85)
 
     scrollista = Scrollbar(root, orient="vertical")
     tab_entregas.configure(yscroll=scrollista.set)
     scrollista.place(relx=0.96 , rely=0.1,relwidth=0.04, relheight=0.85)
 
-
     selecionar_lista(tab_entregas, cursor, conexao)  # Passa o tab_entregas, cursor e conexao como argumentos
-
 
     root.mainloop()
 
@@ -112,8 +106,6 @@ def pesquisa_data_e_entregador_janela():
     def on_pesquisar():
         # Chamar a função select_lista aqui para executar a pesquisa
         select_lista(tab_pesquisa_data_entregador, cursor, conexao, data_entry)
-
-     
 
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
@@ -173,7 +165,6 @@ def pesquisa_data_e_entregador_janela():
     tab_pesquisa_data_entregador.column("#7", width=50)
     tab_pesquisa_data_entregador.column("#8", width=50)
    
-
     tab_pesquisa_data_entregador.place(relx=0.11, rely=0.10 , relwidth=0.85, relheight=0.85)
 
     scrollista = Scrollbar(root, orient="vertical")
@@ -352,11 +343,8 @@ def pesquisa_hoje_janela():
     root.mainloop()
     conexao.close()
 
-
 def select_Exibir_entregadores(tab_exibir_entregadores, cursor, conexao):
     tab_exibir_entregadores.delete(*tab_exibir_entregadores.get_children())
-
-    
    
     # Utilizando parâmetros na consulta SQL
     cursor.execute("""
@@ -369,7 +357,6 @@ def select_Exibir_entregadores(tab_exibir_entregadores, cursor, conexao):
 
     for row in lista_entregadores:
         tab_exibir_entregadores.insert("", tk.END, values=row)
-
 
 def Exibir_entregadores_janela():
 
@@ -394,7 +381,6 @@ def Exibir_entregadores_janela():
     tab_exibir_entregadores.column("#2", width=150)
     tab_exibir_entregadores.column("#3", width=150)
     
-
     tab_exibir_entregadores.place(relx=0.01, rely=0.10 , relwidth=0.95, relheight=0.85)
 
     scrollista = Scrollbar(root, orient="vertical")
@@ -406,12 +392,9 @@ def Exibir_entregadores_janela():
     root.mainloop()
     conexao.close()
 
-
 def select_Exibir_clientes(tab_exibir_clientes, cursor, conexao):
     tab_exibir_clientes.delete(*tab_exibir_clientes.get_children())
 
-    
-   
     # Utilizando parâmetros na consulta SQL
     cursor.execute("""
     SELECT cod, nome, telefone, bairro
@@ -448,7 +431,6 @@ def exibir_clientes_janela():
     tab_exibir_clientes.column("#2", width=150)
     tab_exibir_clientes.column("#3", width=150)
     tab_exibir_clientes.column("#4", width=150)
-    
 
     tab_exibir_clientes.place(relx=0.01, rely=0.10 , relwidth=0.95, relheight=0.85)
 
@@ -499,7 +481,6 @@ def janela_adicionar_cliente():
     global entry_telefone
     global entry_bairro
 
-
     label_cod = tk.Label(root, text="Cod:")
     label_cod.place(x=10 , y= 10)
     entry_cod = tk.Entry(root)
@@ -529,7 +510,6 @@ def adicionar_entregador():
     cod = entry_cod.get()
     nome = entry_nome.get()
     telefone = entry_telefone.get()
-    
 
     if nome and telefone and telefone:
         conexao = sqlite3.connect('entregas.db')
@@ -546,8 +526,7 @@ def adicionar_entregador():
         # Limpar os campos de entrada após a adição bem-sucedida
         entry_cod.delete(0, tk.END)
         entry_nome.delete(0, tk.END)
-        entry_telefone.delete(0, tk.END)
-        
+        entry_telefone.delete(0, tk.END)   
 
     else:
         messagebox.showwarning("Erro", "Por favor, preencha todos os campos.")
@@ -560,7 +539,6 @@ def janela_adicionar_entregador():
     global entry_cod
     global entry_nome
     global entry_telefone
-
 
     label_cod = tk.Label(root, text="Cod:")
     label_cod.place(x=10 , y= 10)
@@ -576,8 +554,6 @@ def janela_adicionar_entregador():
     label_telefone.place(x=10,y=60)
     entry_telefone = tk.Entry(root)
     entry_telefone.place(x=80,y=60)
-
-   
 
     btn_adicionar = tk.Button(root, text="Adicionar", command=adicionar_entregador)
     btn_adicionar.place(x= 100, y=120)
@@ -854,7 +830,6 @@ def obter_dados_entregador():
             entry_nome.delete(0, tk.END)
             entry_telefone.delete(0, tk.END)
             
-
             entry_nome.insert(0, cliente[0])
             entry_telefone.insert(0, cliente[1])
             
@@ -872,7 +847,6 @@ def atualizar_entregador():
     nome = entry_nome.get()
     telefone = entry_telefone.get()
     
-
     if cod and nome and telefone:
         conexao = sqlite3.connect('entregas.db')
         cursor = conexao.cursor()
@@ -889,7 +863,6 @@ def atualizar_entregador():
         entry_cod.delete(0, tk.END)
         entry_nome.delete(0, tk.END)
         entry_telefone.delete(0, tk.END)
-        
 
     else:
         messagebox.showwarning("Erro", "Por favor, preencha todos os campos.")
@@ -925,72 +898,74 @@ def janela_editar_entregadores():
 
     root.mainloop()
 
-def sair():
-    if messagebox.askokcancel("Sair", "Deseja realmente sair?"):
-        root.quit()
+def janela_principal():
+    
+    def sair():
+        if messagebox.askokcancel("Sair", "Deseja realmente sair?"):
+            root.quit()
+    
+    root = tk.Tk()
+    root.title("Gerenciador De Entregas")
+    root.geometry("2000x1000")
 
-root = tk.Tk()
-root.title("Gerenciador De Entregas")
-root.geometry("500x250")
+    conexao = sqlite3.connect('entregas.db')
+    cursor = conexao.cursor()
 
-conexao = sqlite3.connect('entregas.db')
-cursor = conexao.cursor()
+    # Função para criar um submenu em cascata
+    def criar_submenu(parent, options):
+        submenu = tk.Menu(parent, tearoff=0)
+        for label, command in options.items():
+            if label == "-":  # Adiciona uma linha separadora
+                submenu.add_separator()
+            else:
+                submenu.add_command(label=label, command=command)
+        return submenu
 
-# Função para criar um submenu em cascata
-def criar_submenu(parent, options):
-    submenu = tk.Menu(parent, tearoff=0)
-    for label, command in options.items():
-        if label == "-":  # Adiciona uma linha separadora
-            submenu.add_separator()
-        else:
-            submenu.add_command(label=label, command=command)
-    return submenu
+    # Cria a barra de menu principal
+    barra_menu = tk.Menu(root)
+    root.config(menu=barra_menu)
 
-# Cria a barra de menu principal
-barra_menu = tk.Menu(root)
-root.config(menu=barra_menu)
+    # Cria os menus principais
+    menu_adicionar = criar_submenu(barra_menu, {
+        "Adicionar Cliente": janela_adicionar_cliente,
+        "Adicionar Entregador": janela_adicionar_entregador,
+        "-": None,  # Linha separadora
+        "Sair": sair
+    })
 
-# Cria os menus principais
-menu_adicionar = criar_submenu(barra_menu, {
-    "Adicionar Cliente": janela_adicionar_cliente,
-    "Adicionar Entregador": janela_adicionar_entregador,
-    "-": None,  # Linha separadora
-    "Sair": sair
-})
+    menu_Deletar = criar_submenu(barra_menu, {
+        "Deletar Cliente": janela_deletar_cliente,
+        "Deletar Entregador": janela_deletar_entregador,
+        "Deletar Entrega Em Aberto": janela_deletar_entrega_em_aberto,
+        "Deletar Entrega Em Rota": janela_deletar_entrega_em_rota
+    })
 
-menu_Deletar = criar_submenu(barra_menu, {
-    "Deletar Cliente": janela_deletar_cliente,
-    "Deletar Entregador": janela_deletar_entregador,
-    "Deletar Entrega Em Aberto": janela_deletar_entrega_em_aberto,
-    "Deletar Entrega Em Rota": janela_deletar_entrega_em_rota
-})
+    menu_exibir = criar_submenu(barra_menu, {
+        "Exibir Clientes": exibir_clientes_janela,
+        "Exibir Entregadores": Exibir_entregadores_janela
+    })
 
-menu_exibir = criar_submenu(barra_menu, {
-    "Exibir Clientes": exibir_clientes_janela,
-    "Exibir Entregadores": Exibir_entregadores_janela
-})
+    menu_editar = criar_submenu(barra_menu, {
+        "Editar Clientes": janela_editar_cliente,
+        "Editar Entregadores": janela_editar_entregadores
+    })
 
-menu_editar = criar_submenu(barra_menu, {
-    "Editar Clientes": janela_editar_cliente,
-    "Editar Entregadores": janela_editar_entregadores
-})
+    menu_pesquisa = criar_submenu(barra_menu, {
+        "Pesquisa Entregas De Hoje": pesquisa_hoje_janela,
+        "Pesquisa Entregas Por Data": pesquisa_data_janela,
+        "Pesquisa Entregas Data E Entregador": pesquisa_data_e_entregador_janela,
+        "Todas Entregas Finalizadas": todas_entregas_finalizadas
+    })
 
-menu_pesquisa = criar_submenu(barra_menu, {
-    "Pesquisa Entregas De Hoje": pesquisa_hoje_janela,
-    "Pesquisa Entregas Por Data": pesquisa_data_janela,
-    "Pesquisa Entregas Data E Entregador": pesquisa_data_e_entregador_janela,
-    "Todas Entregas Finalizadas": todas_entregas_finalizadas
+    # Adiciona os menus principais à barra de menu
+    barra_menu.add_cascade(label="Adicionar", menu=menu_adicionar)
+    barra_menu.add_cascade(label="Deletar", menu=menu_Deletar)
+    barra_menu.add_cascade(label="Exibir", menu=menu_exibir)
+    barra_menu.add_cascade(label="Editar", menu=menu_editar)
+    barra_menu.add_cascade(label="Pesquisa", menu=menu_pesquisa)
 
-})
+    conexao.close()
 
-# Adiciona os menus principais à barra de menu
-barra_menu.add_cascade(label="Adicionar", menu=menu_adicionar)
-barra_menu.add_cascade(label="Deletar", menu=menu_Deletar)
-barra_menu.add_cascade(label="Exibir", menu=menu_exibir)
-barra_menu.add_cascade(label="Editar", menu=menu_editar)
-barra_menu.add_cascade(label="Pesquisa", menu=menu_pesquisa)
+    root.mainloop()
 
-conexao.close()
-
-root.mainloop()
-
+janela_principal()

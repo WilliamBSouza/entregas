@@ -49,6 +49,7 @@ cursor = conexao.cursor()
 #cursor.execute('CREATE TABLE entregas_finalizadas (cod_entrega INT PRIMARY KEY, cod_entregador INT, nome_cliente , bairro , telefone_entregador, Entregador, data_entrega, horário_saida, horário_chegada)')
 #cursor.execute('ALTER TABLE entregas_rota ADD COLUMN cod_cliente INT')
 #cursor.execute('ALTER TABLE entregas_finalizadas ADD COLUMN cod_cliente INT')
+#cursor.execute('ALTER TABLE entregas_finalizadas ADD COLUMN observação VARCHAR (100)') foi utilizado o mesmo código para adicionar a coluna nas 3 fases de entregas
 
 ################################################################################################################################################
                            #TESTE       TESTE                    TESTE

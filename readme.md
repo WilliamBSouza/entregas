@@ -24,6 +24,9 @@ editar a tabela em entregas finalizadas por entregador e data para aparecer a li
 
 
 
+#pausa para o café após a bagunça em janela principal (abrir_código.py e teste.py )
+
+
 
 ADICIONAR BOTÕES EM TODAS JANELAS E APÓS ISSO CRIAR AS INTERFÁCIES PARA CADA COMANDO...
 

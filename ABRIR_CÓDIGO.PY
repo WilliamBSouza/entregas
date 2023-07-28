@@ -7,7 +7,7 @@ import sqlite3
 from tkcalendar import Calendar, DateEntry 
 
 
-#ceiar a página da janela principal a partir deste código
+#criar a página da janela principal a partir deste código
 
 
 
@@ -31,9 +31,12 @@ def select_lista(tab_entregas_em_aberto, cursor, conexao,):
     cursor.execute("""
         SELECT cod_cliente, nome_cliente, bairro_cliente, data_entrega
         FROM entregas_aberto
-        WHERE cod_cliente = ?
-        ORDER BY horário_chegada ASC;
+                   
+                   ;
     """, ( cod_cliente_entry))   #criar a entry para adicionar o cod do cliente ------------------------------------------------------------------------------------------------
+
+#   -----------------linha 34 foi removido o código  WHERE cod_cliente = ?
+
 
     lista_entregas_aberto = cursor.fetchall()
 

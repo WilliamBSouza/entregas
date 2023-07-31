@@ -402,9 +402,9 @@ def select_Exibir_clientes(tab_exibir_clientes, cursor, conexao):
     ORDER BY cod ASC;
     """,)
 
-    lista_entregadores = cursor.fetchall()
+    lista_clientes = cursor.fetchall()
 
-    for row in lista_entregadores:
+    for row in lista_clientes:
         tab_exibir_clientes.insert("", tk.END, values=row)
 
 def exibir_clientes_janela():

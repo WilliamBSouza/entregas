@@ -450,7 +450,7 @@ def pesquisa_data_entregador(entregador, data_entrega ):
 
 #  *****************AVISO*****************AVISO*******************************AVISO****************************AVISO***********************
 
-while False:  # False para servir apenas como base para o FRONTEND
+while True:  # False para servir apenas como base para o FRONTEND
 
 #  *****************AVISO*****************AVISO*******************************AVISO****************************AVISO***********************
    

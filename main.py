@@ -248,9 +248,10 @@ def add_entregas_aberto():
 
         # Criar o valor único para a coluna cod_entrega
         cod_entrega_unico = f"{obter_data_atual()} {obter_horario_atual()}"
+        observação = input("Digite a observação para esta entrega: ")
 
         # Insere a entrega em aberto com as informações do cliente
-        cursor.execute('INSERT INTO entregas_aberto VALUES(?,?,?,?)', (codigo_cliente, cliente_info[0], cliente_info[1],cod_entrega_unico))
+        cursor.execute('INSERT INTO entregas_aberto VALUES(?,?,?,?,?)', (codigo_cliente, cliente_info[0], cliente_info[1],cod_entrega_unico, observação))
 
         # Confirma as alterações
         conexao.commit()

@@ -7,58 +7,70 @@ def exibir_dados():
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
 
-    # Execute a consulta para obter os dados da tabela "entregas_aberto"
     cursor.execute("""
     SELECT cod_entrega, cod_cliente, nome_cliente, bairro_cliente, observação
     FROM entregas_aberto 
     ORDER BY cod_entrega ASC;
-    """,)
+    """)
     dados_do_banco = cursor.fetchall()
 
-    # Limpe a tabela antes de exibir os novos dados
     for row in tab_entregas_em_aberto.get_children():
         tab_entregas_em_aberto.delete(row)
 
-    # Preencha a tabela com os novos dados
     for row in dados_do_banco:
         tab_entregas_em_aberto.insert("", tk.END, values=row)
 
     conexao.close()
 
+def exibir_entregadores():
+    conexao = sqlite3.connect('entregas.db')
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+    SELECT cod, telefone, nome
+    FROM entregadores 
+    ORDER BY cod ASC;
+    """)
+    dados_entregadores = cursor.fetchall()
+
+    entregadores_combobox['values'] = [nome for _, _, nome in dados_entregadores]
+
+    conexao.close()
+
 def mover_para_rota():
-    # Obtém as entregas selecionadas
     selecionados = tab_entregas_em_aberto.selection()
 
     if not selecionados:
         messagebox.showwarning("Aviso", "Nenhuma entrega selecionada.")
         return
 
-    # Conecta-se ao banco de dados
+    entregador_selecionado = entregadores_combobox.get()
+    if not entregador_selecionado:
+        messagebox.showwarning("Aviso", "Selecione um entregador antes de transferir as entregas.")
+        return
+
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
 
-    # Move as entregas selecionadas para a tabela "entregas_rota"
     for item in selecionados:
         entrega_id = tab_entregas_em_aberto.item(item, "values")[0]
         cursor.execute("""
-            INSERT INTO entregas_rota (cod_entrega, cod_cliente, nome_cliente, bairro_cliente, observacao)
-            SELECT cod_entrega, cod_cliente, nome_cliente, bairro_cliente, observação
-            FROM entregas_aberto
+            INSERT INTO entregas_rota (cod_entrega, cod_cliente, nome_cliente, bairro, observação, cod_entregador, telefone_entregador, entregador, data_entrega, horário_saida)
+            SELECT cod_entrega, cod_cliente, nome_cliente, bairro_cliente, observação, ?, ?, ?, ?, ? FROM entregas_aberto
             WHERE cod_entrega = ?;
-        """, (entrega_id,))
+        """, (entregador_selecionado[0], entregador_selecionado[1], entregador_selecionado[2], '', '', entrega_id))
         cursor.execute("DELETE FROM entregas_aberto WHERE cod_entrega = ?", (entrega_id,))
         conexao.commit()
 
     conexao.close()
 
-    # Atualiza a tabela após a transferência
     exibir_dados()
 
 root = tk.Tk()
 root.title("Tabela de Entregas em Aberto")
 root.geometry("800x600")
 
-tab_entregas_em_aberto = ttk.Treeview(root, height=10, columns=("col1", "col2", "col3", "col4", "col5"))
+tab_entregas_em_aberto = ttk.Treeview(root, height=10, columns=("col1", "col2", "col3", "col4", "col5"), selectmode="extended")
 tab_entregas_em_aberto.heading("#0", text="")
 tab_entregas_em_aberto.heading("#1", text="Cod. Entrega")
 tab_entregas_em_aberto.heading("#2", text="Cod. Cliente")
@@ -75,13 +87,16 @@ tab_entregas_em_aberto.column("#5", width=200)
 
 tab_entregas_em_aberto.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.8)
 
+entregadores_combobox = ttk.Combobox(root, values=[])
+entregadores_combobox.place(relx=0.4, rely=0.02)
+exibir_entregadores()
+
 btn_atualizar = tk.Button(root, text="Atualizar Dados", command=exibir_dados)
 btn_atualizar.place(relx=0.2, rely=0.02)
 
 btn_transferir = tk.Button(root, text="Transferir para Rota", command=mover_para_rota)
 btn_transferir.place(relx=0.6, rely=0.02)
 
-# Chame a função para exibir os dados inicialmente
 exibir_dados()
 
 root.mainloop()

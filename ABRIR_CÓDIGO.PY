@@ -1,1 +1,0 @@
-#foi utilizado para abrir códigos encontrados em pesquisas

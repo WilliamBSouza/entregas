@@ -1,1 +1,0 @@
-# foi utilizado para testar códigos de pesquisas e alterações de códigos criados por mim

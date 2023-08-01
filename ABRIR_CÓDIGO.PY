@@ -199,11 +199,14 @@ tab_entregas_em_aberto.column("#3", width=200)
 tab_entregas_em_aberto.column("#4", width=150)
 tab_entregas_em_aberto.column("#5", width=200)
 
-tab_entregas_em_aberto.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.4)
+tab_entregas_em_aberto.place(relx=0.1, rely=0.15, relwidth=0.8, relheight=0.35)
 
 entregadores_combobox = ttk.Combobox(root, values=[])
 entregadores_combobox.place(x=750,y=25)
 exibir_entregadores()
+
+label_entregas_aberto =  tk.Label(root, text="ENTREGAS EM ABERTO",bg="green")
+label_entregas_aberto.place(x= 850, y = 125)
 
 btn_atualizar = tk.Button(root, text="Atualizar Dados", command=exibir_dados)
 btn_atualizar.place(x=500,y=25)
@@ -232,6 +235,105 @@ btn_deletar_entrega.place(x=1200, y=25)
 
 btn_alterar_anotacao = tk.Button(root, text="Alterar Anotação", command=alterar_anotacao)
 btn_alterar_anotacao.place(x=40, y=110)
+
+
+
+######################## entregas em rota ###############################
+
+def exibir_entregas_rota():
+    conexao = sqlite3.connect('entregas.db')
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+    SELECT cod_entrega, cod_cliente, nome_cliente, bairro, observação, entregador
+    FROM entregas_rota
+    ORDER BY cod_entrega ASC;
+    """)
+    dados_do_banco = cursor.fetchall()
+
+    for row in tab_entregas_em_rota.get_children():
+        tab_entregas_em_rota.delete(row)
+
+    for row in dados_do_banco:
+        tab_entregas_em_rota.insert("", tk.END, values=row)
+
+    conexao.close()
+
+def mover_para_finalizadas():
+    selecionados = tab_entregas_em_rota.selection()
+
+    if not selecionados:
+        messagebox.showwarning("Aviso", "Nenhuma entrega selecionada.")
+        return
+
+    horario_chegada = datetime.datetime.now().strftime("%H:%M:%S")
+
+    conexao = sqlite3.connect('entregas.db')
+    cursor = conexao.cursor()
+
+    for item in selecionados:
+        entrega_id = tab_entregas_em_rota.item(item, "values")[0]
+        #cursor.execute("UPDATE entregas_rota SET horário_chegada = ? WHERE cod_entrega = ?", (horario_chegada, entrega_id))
+        cursor.execute("""INSERT INTO entregas_finalizadas( cod_entrega, cod_entregador , nome_cliente , bairro , telefone_entregador , entregador , data_entrega , horário_saida , horário_chegada , cod_cliente , observação )
+                   SELECT cod_entrega, cod_entregador,nome_cliente,bairro, telefone_entregador, entregador,data_entrega, horário_saida, ? ,cod_cliente, observação
+                   FROM entregas_rota WHERE cod_entrega = ?""", (horario_chegada, entrega_id))
+
+        cursor.execute("DELETE FROM entregas_rota WHERE cod_entrega = ?", (entrega_id,))
+        conexao.commit()
+
+    conexao.close()
+
+    exibir_entregas_rota()
+    
+
+def deletar_entrega_rota():
+    selecionados = tab_entregas_em_rota.selection()
+
+    if not selecionados:
+        messagebox.showwarning("Aviso", "Nenhuma entrega selecionada para deletar.")
+        return
+
+    resposta = messagebox.askyesno("Confirmação", "Tem certeza que deseja deletar a(s) entrega(s) selecionada(s)?")
+
+    if resposta:
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        for item in selecionados:
+            entrega_id = tab_entregas_em_rota.item(item, "values")[0]
+            cursor.execute("DELETE FROM entregas_rota WHERE cod_entrega = ?", (entrega_id,))
+            conexao.commit()
+
+        conexao.close()
+
+        exibir_entregas_rota()
+tab_entregas_em_rota = ttk.Treeview(root, height=10, columns=("col1", "col2", "col3", "col4", "col5", "col6"), selectmode="extended")
+tab_entregas_em_rota.heading("#0", text="")
+tab_entregas_em_rota.heading("#1", text="Cod. Entrega")
+tab_entregas_em_rota.heading("#2", text="Cod. Cliente")
+tab_entregas_em_rota.heading("#3", text="Cliente")
+tab_entregas_em_rota.heading("#4", text="Bairro")
+tab_entregas_em_rota.heading("#5", text="Observação")
+tab_entregas_em_rota.heading("#6", text="Entregador")
+
+tab_entregas_em_rota.column("#0", width=0)
+tab_entregas_em_rota.column("#1", width=100)
+tab_entregas_em_rota.column("#2", width=100)
+tab_entregas_em_rota.column("#3", width=200)
+tab_entregas_em_rota.column("#4", width=150)
+tab_entregas_em_rota.column("#5", width=200)
+tab_entregas_em_rota.column("#6", width=100)
+
+tab_entregas_em_rota.place(relx=0.1, rely=0.60, relwidth=0.8, relheight=0.35)
+
+btn_transferir_finalizadas = tk.Button(root, text="Transferir para Finalizadas", command=mover_para_finalizadas)
+btn_transferir_finalizadas.place(x=800, y=550)
+
+btn_deletar_rota = tk.Button(root, text="Deletar Entrega em Rota", command=deletar_entrega_rota, bg="red", fg="black")
+btn_deletar_rota.place(x=1200, y=550)
+
+exibir_entregas_rota()
+
 
 exibir_dados()
 

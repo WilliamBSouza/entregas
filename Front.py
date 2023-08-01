@@ -7,11 +7,6 @@ import sqlite3
 from tkcalendar import Calendar, DateEntry 
 #cores
 
-cor0 = "#f0f3f5"  # Preta / black
-cor1 = "#feffff"  # branca / white
-cor2 = "#3fb5a3"  # verde / green
-cor3 = "#38576b"  # valor / value
-cor4 = "#403d3d"   # letra / letters
 
 def todas_entregas_finalizadas():
     
@@ -22,12 +17,12 @@ def todas_entregas_finalizadas():
         for item in tab_entregas.get_children()[1:]:
             tab_entregas.delete(item)
 
-        lista = cursor.execute("""SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada 
+        lista = cursor.execute("""SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada,observação
                                FROM entregas_finalizadas 
                                ORDER BY data_entrega AND horário_chegada ASC; """)
 
         for row in lista:
-            tab_entregas.insert("", tk.END, values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
+            tab_entregas.insert("", tk.END, values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7],row[8]))
     
     root = tk.Tk()
     root.title("Todas Entregas Finalizadas")
@@ -36,7 +31,7 @@ def todas_entregas_finalizadas():
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
 
-    tab_entregas = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8"))
+    tab_entregas = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8","col9"))
 
     tab_entregas.heading("#0" , text="") #colocando os cabeçalhos das colunas
     tab_entregas.heading("#1" , text="Cod. Entrega") 
@@ -47,6 +42,7 @@ def todas_entregas_finalizadas():
     tab_entregas.heading("#6", text="Data Entrega")
     tab_entregas.heading("#7", text="Horário Saida")
     tab_entregas.heading("#8", text="Horário Chegada")
+    tab_entregas.heading("#9", text="Observação")
 
         #colocando o tamanho das colunas
     #o tamanho da coluna é dividida em 500 onde 50 seria 10% da tela
@@ -59,6 +55,7 @@ def todas_entregas_finalizadas():
     tab_entregas.column("#6", width=50)
     tab_entregas.column("#7", width=50)
     tab_entregas.column("#8", width=50)
+    tab_entregas.column("#9", width=100)
    
     tab_entregas.place(relx=0.01, rely=0.1 , relwidth=0.95, relheight=0.85)
 
@@ -90,7 +87,7 @@ def select_lista(tab_pesquisa_data_entregador, cursor, conexao,data_entry):
 
     # Utilizando parâmetros na consulta SQL
     cursor.execute("""
-        SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada
+        SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada, observação
         FROM entregas_finalizadas
         WHERE data_entrega = ? AND entregador = ?
         ORDER BY horário_chegada ASC;
@@ -141,7 +138,7 @@ def pesquisa_data_e_entregador_janela():
     
     lista.bind('<<ListboxSelect>>', lista_selecao_entregador)
 
-    tab_pesquisa_data_entregador = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8"))
+    tab_pesquisa_data_entregador = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8","col9"))
 
     tab_pesquisa_data_entregador.heading("#0" , text="") #colocando os cabeçalhos das colunas
     tab_pesquisa_data_entregador.heading("#1" , text="Cod. Entrega") 
@@ -152,6 +149,7 @@ def pesquisa_data_e_entregador_janela():
     tab_pesquisa_data_entregador.heading("#6", text="Data Entrega")
     tab_pesquisa_data_entregador.heading("#7", text="Horário Saida")
     tab_pesquisa_data_entregador.heading("#8", text="Horário Chegada")
+    tab_pesquisa_data_entregador.heading("#9", text="Observação")
 
         #colocando o tamanho das colunas
     #o tamanho da coluna é dividida em 500 onde 50 seria 10% da tela
@@ -164,6 +162,7 @@ def pesquisa_data_e_entregador_janela():
     tab_pesquisa_data_entregador.column("#6", width=50)
     tab_pesquisa_data_entregador.column("#7", width=50)
     tab_pesquisa_data_entregador.column("#8", width=50)
+    tab_pesquisa_data_entregador.column("#9", width=100)
    
     tab_pesquisa_data_entregador.place(relx=0.11, rely=0.10 , relwidth=0.85, relheight=0.85)
 
@@ -187,7 +186,7 @@ def selecct_lista_pesq_data(tab_pesquisa_data, cursor, conexao,data_entry):
    
     # Utilizando parâmetros na consulta SQL
     cursor.execute("""
-    SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada
+    SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada,observação
     FROM entregas_finalizadas
     WHERE data_entrega = ? 
     ORDER BY horário_chegada ASC;
@@ -226,7 +225,7 @@ def pesquisa_data_janela():
     btn_pesquisar = tk.Button(root, text="Pesquisar", command= on_pesquisar)
     btn_pesquisar.place(x=500, y=1 )  
     
-    tab_pesquisa_data = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8"))
+    tab_pesquisa_data = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8","col9"))
 
     tab_pesquisa_data.heading("#0" , text="") #colocando os cabeçalhos das colunas
     tab_pesquisa_data.heading("#1" , text="Cod. Entrega") 
@@ -237,6 +236,7 @@ def pesquisa_data_janela():
     tab_pesquisa_data.heading("#6", text="Data Entrega")
     tab_pesquisa_data.heading("#7", text="Horário Saida")
     tab_pesquisa_data.heading("#8", text="Horário Chegada")
+    tab_pesquisa_data.heading("#9", text="Observação")
 
         #colocando o tamanho das colunas
     #o tamanho da coluna é dividida em 500 onde 50 seria 10% da tela
@@ -249,6 +249,7 @@ def pesquisa_data_janela():
     tab_pesquisa_data.column("#6", width=50)
     tab_pesquisa_data.column("#7", width=50)
     tab_pesquisa_data.column("#8", width=50)
+    tab_pesquisa_data.column("#9", width=100)
 
     tab_pesquisa_data.place(relx=0.01, rely=0.10 , relwidth=0.95, relheight=0.85)
 
@@ -269,7 +270,7 @@ def selecct_lista_pesq_hoje(tab_pesquisa_hoje, cursor, conexao,data_entry):
    
     # Utilizando parâmetros na consulta SQL
     cursor.execute("""
-    SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada
+    SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada,observação
     FROM entregas_finalizadas
     WHERE data_entrega = ? 
     ORDER BY horário_chegada ASC;
@@ -308,7 +309,7 @@ def pesquisa_hoje_janela():
     btn_pesquisar = tk.Button(root, text="Pesquisar", command= on_pesquisar)
     btn_pesquisar.place(x=500, y=1 )  
     
-    tab_pesquisa_hoje = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8"))
+    tab_pesquisa_hoje = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8","col9"))
 
     tab_pesquisa_hoje.heading("#0" , text="") #colocando os cabeçalhos das colunas
     tab_pesquisa_hoje.heading("#1" , text="Cod. Entrega") 
@@ -319,6 +320,7 @@ def pesquisa_hoje_janela():
     tab_pesquisa_hoje.heading("#6", text="Data Entrega")
     tab_pesquisa_hoje.heading("#7", text="Horário Saida")
     tab_pesquisa_hoje.heading("#8", text="Horário Chegada")
+    tab_pesquisa_hoje.heading("#9", text="Observação")
 
         #colocando o tamanho das colunas
     #o tamanho da coluna é dividida em 500 onde 50 seria 10% da tela
@@ -331,6 +333,7 @@ def pesquisa_hoje_janela():
     tab_pesquisa_hoje.column("#6", width=50)
     tab_pesquisa_hoje.column("#7", width=50)
     tab_pesquisa_hoje.column("#8", width=50)
+    tab_pesquisa_hoje.column("#9", width=100)
 
     tab_pesquisa_hoje.place(relx=0.01, rely=0.10 , relwidth=0.95, relheight=0.85)
 
@@ -367,7 +370,7 @@ def Exibir_entregadores_janela():
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
 
-    tab_exibir_entregadores = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8"))
+    tab_exibir_entregadores = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3",))
 
     tab_exibir_entregadores.heading("#0" , text="") #colocando os cabeçalhos das colunas
     tab_exibir_entregadores.heading("#1" , text="Cod. Entregador") 
@@ -723,6 +726,47 @@ def janela_deletar_entrega_em_rota():
 
     root.mainloop()
 
+# Função para excluir uma entregas finalizadas do banco de dados
+def deletar_entrega_finalizada():
+    cod = entry_cod.get()
+
+    if cod:
+        resposta = messagebox.askquestion("Confirmação", "Tem certeza que deseja excluir a entrega finalizada? Esta ação não pode ser desfeita.")
+        
+        if resposta == 'yes':
+            conexao = sqlite3.connect('entregas.db')
+            cursor = conexao.cursor()
+
+            cursor.execute('DELETE FROM entregas_finalizadas WHERE cod_entrega = ?', (cod,))
+            conexao.commit()
+
+            cursor.close()
+            conexao.close()
+
+            messagebox.showinfo("Sucesso", "Entrega finalizada excluída com sucesso!")
+
+            # Limpar o campo de entrada após a exclusão bem-sucedida
+            entry_cod.delete(0, tk.END)
+
+    else:
+        messagebox.showwarning("Erro", "Por favor, insira o código da entrega.")
+
+def janela_deletar_entrega_finalizada():
+    root = tk.Tk()
+    root.title("Deletar Entrega Finalizada")
+    root.geometry("300x100")
+    
+    label_cod = tk.Label(root, text="Código da entrega:")
+    label_cod.place(x=10, y=20)
+    global entry_cod
+    entry_cod = tk.Entry(root)
+    entry_cod.place(x=135, y=20)
+
+    btn_deletar = tk.Button(root, text="Deletar", command=deletar_entrega_finalizada)
+    btn_deletar.place(x=150, y=60)
+
+    root.mainloop()
+
 # Função para obter os dados do cliente a ser editado
 def obter_dados_cliente():
     cod = entry_cod.get()
@@ -904,9 +948,13 @@ def janela_principal():
         if messagebox.askokcancel("Sair", "Deseja realmente sair?"):
             root.quit()
     
+
+    ############### INICIO JANELA PRINCIPAL    #############
+
+
     root = tk.Tk()
     root.title("Gerenciador De Entregas")
-    root.geometry("2000x1000")
+    root.geometry("2100x1200")
 
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
@@ -937,7 +985,8 @@ def janela_principal():
         "Deletar Cliente": janela_deletar_cliente,
         "Deletar Entregador": janela_deletar_entregador,
         "Deletar Entrega Em Aberto": janela_deletar_entrega_em_aberto,
-        "Deletar Entrega Em Rota": janela_deletar_entrega_em_rota
+        "Deletar Entrega Em Rota": janela_deletar_entrega_em_rota,
+        "Deletar Entrega Finalizada": janela_deletar_entrega_finalizada
     })
 
     menu_exibir = criar_submenu(barra_menu, {
@@ -963,6 +1012,464 @@ def janela_principal():
     barra_menu.add_cascade(label="Exibir", menu=menu_exibir)
     barra_menu.add_cascade(label="Editar", menu=menu_editar)
     barra_menu.add_cascade(label="Pesquisa", menu=menu_pesquisa)
+
+    def exibir_dados():
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+        SELECT cod_entrega, cod_cliente, nome_cliente, bairro_cliente, observação
+        FROM entregas_aberto 
+        ORDER BY cod_entrega ASC;
+        """)
+        dados_do_banco = cursor.fetchall()
+
+        for row in tab_entregas_em_aberto.get_children():
+            tab_entregas_em_aberto.delete(row)
+
+        for row in dados_do_banco:
+            tab_entregas_em_aberto.insert("", tk.END, values=row)
+
+        conexao.close()
+
+    def exibir_entregadores():
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+        SELECT cod, telefone, nome
+        FROM entregadores 
+        ORDER BY cod ASC;
+        """)
+        dados_entregadores = cursor.fetchall()
+
+        entregadores_combobox['values'] = [nome for _, _, nome in dados_entregadores]
+
+        conexao.close()
+
+    def mover_para_rota():
+        
+        selecionados = tab_entregas_em_aberto.selection()
+
+        if not selecionados:
+            messagebox.showwarning("Aviso", "Nenhuma entrega selecionada.")
+            return
+
+        entregador_selecionado = entregadores_combobox.get()
+        if not entregador_selecionado:
+            messagebox.showwarning("Aviso", "Selecione um entregador antes de transferir as entregas.")
+            return
+
+        data_entrega = date.today().strftime("%Y-%m-%d")  # Obtém a data atual no formato "YYYY-MM-DD"
+        horario_saida = datetime.datetime.now().strftime("%H:%M:%S")
+
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+            SELECT cod, telefone, nome
+            FROM entregadores
+            WHERE nome = ?;
+        """, (entregador_selecionado,))
+
+        entregador_dados = cursor.fetchone()
+
+        for item in selecionados:
+            entrega_id = tab_entregas_em_aberto.item(item, "values")[0]
+            cursor.execute("""
+                INSERT INTO entregas_rota (cod_entrega, cod_cliente, nome_cliente, bairro, observação, cod_entregador, telefone_entregador, entregador, data_entrega, horário_saida)
+                SELECT cod_entrega, cod_cliente, nome_cliente, bairro_cliente, observação, ?, ?, ?, ?, ? FROM entregas_aberto
+                WHERE cod_entrega = ?;
+            """, (entregador_dados[0], entregador_dados[1], entregador_dados[2], data_entrega, horario_saida, entrega_id))
+            cursor.execute("DELETE FROM entregas_aberto WHERE cod_entrega = ?", (entrega_id,))
+            conexao.commit()
+
+        conexao.close()
+
+        exibir_dados()
+
+
+    def adicionar_entrega_aberto():
+        cod_cliente = cod_cliente_entry.get()
+        observacao = observacao_entry.get()
+
+        if not cod_cliente :
+            messagebox.showwarning("Aviso", "Por favor, insira o código do cliente.")
+            return
+
+        cod_entrega = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") #o código da entrega é a data e hora exata 
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        try:
+            cursor.execute("""
+                INSERT INTO entregas_aberto (cod_cliente, nome_cliente, bairro_cliente, observação, cod_entrega)
+                SELECT cod, nome, bairro, ?, ? FROM clientes
+                WHERE cod = ?;
+            """, (observacao, cod_entrega, cod_cliente))
+            conexao.commit()
+            messagebox.showinfo("Sucesso", "Entrega adicionada com sucesso!")
+            exibir_dados()
+        except sqlite3.Error as e:
+            messagebox.showerror("Erro", "Ocorreu um erro ao adicionar a entrega:\n" + str(e))
+        finally:
+            conexao.close()
+
+        cod_cliente_entry.delete(0, tk.END)
+        observacao_entry.delete(0, tk.END)
+
+    def deletar_entrega_aberto():
+        selecionados = tab_entregas_em_aberto.selection()
+
+        if not selecionados:
+            messagebox.showwarning("Aviso", "Nenhuma entrega selecionada para deletar.")
+            return
+
+        resposta = messagebox.askyesno("Confirmação", "Tem certeza que deseja deletar a(s) entrega(s) selecionada(s)?")
+
+        if resposta:
+            conexao = sqlite3.connect('entregas.db')
+            cursor = conexao.cursor()
+
+            for item in selecionados:
+                entrega_id = tab_entregas_em_aberto.item(item, "values")[0]
+                cursor.execute("DELETE FROM entregas_aberto WHERE cod_entrega = ?", (entrega_id,))
+                conexao.commit()
+
+            conexao.close()
+
+            exibir_dados()
+
+    def alterar_anotacao():
+        selecionados = tab_entregas_em_aberto.selection()
+
+        if not selecionados:
+            messagebox.showwarning("Aviso", "Nenhuma entrega selecionada para alterar a anotação.")
+            return
+
+        if len(selecionados) > 1:
+            messagebox.showwarning("Aviso", "Selecione apenas uma entrega para alterar a anotação.")
+            return
+
+        entrega_id = tab_entregas_em_aberto.item(selecionados[0], "values")[0]
+
+        # Criar a nova janela (toplevel)
+        global janela_alterar_anotacao
+        janela_alterar_anotacao = tk.Toplevel(root)
+        janela_alterar_anotacao.title("Alterar Anotação")
+        janela_alterar_anotacao.geometry("400x150")
+
+        # Widgets da nova janela
+        label_nova_anotacao = tk.Label(janela_alterar_anotacao, text="Nova Anotação:")
+        label_nova_anotacao.pack()
+
+        nova_anotacao_entry = tk.Entry(janela_alterar_anotacao, width=50)
+        nova_anotacao_entry.pack()
+
+        btn_confirmar_alteracao = tk.Button(janela_alterar_anotacao, text="Confirmar Alteração",
+                                            command=lambda: confirmar_alteracao(entrega_id, nova_anotacao_entry.get()))
+        btn_confirmar_alteracao.pack()
+
+    def confirmar_alteracao(entrega_id, nova_anotacao):
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        try:
+            cursor.execute("UPDATE entregas_aberto SET observação = ? WHERE cod_entrega = ?", (nova_anotacao, entrega_id))
+            conexao.commit()
+            messagebox.showinfo("Sucesso", "Anotação alterada com sucesso!")
+            exibir_dados()
+        except sqlite3.Error as e:
+            messagebox.showerror("Erro", "Ocorreu um erro ao alterar a anotação:\n" + str(e))
+        finally:
+            conexao.close()
+
+        # Fechar a janela de alteração
+        janela_alterar_anotacao.destroy()
+
+
+    tab_entregas_em_aberto = ttk.Treeview(root, height=10, columns=("col1", "col2", "col3", "col4", "col5"), selectmode="extended")
+    tab_entregas_em_aberto.heading("#0", text="")
+    tab_entregas_em_aberto.heading("#1", text="Cod. Entrega")
+    tab_entregas_em_aberto.heading("#2", text="Cod. Cliente")
+    tab_entregas_em_aberto.heading("#3", text="Cliente")
+    tab_entregas_em_aberto.heading("#4", text="Bairro")
+    tab_entregas_em_aberto.heading("#5", text="Observação")
+
+    tab_entregas_em_aberto.column("#0", width=0)
+    tab_entregas_em_aberto.column("#1", width=100)
+    tab_entregas_em_aberto.column("#2", width=100)
+    tab_entregas_em_aberto.column("#3", width=200)
+    tab_entregas_em_aberto.column("#4", width=150)
+    tab_entregas_em_aberto.column("#5", width=200)
+
+    tab_entregas_em_aberto.place(relx=0.1, rely=0.15, relwidth=0.8, relheight=0.35)
+
+    entregadores_combobox = ttk.Combobox(root, values=[])
+    entregadores_combobox.place(x=750,y=25)
+    exibir_entregadores()
+
+    label_entregas_aberto = tk.Label(root, text="ENTREGAS EM ABERTO", fg="blue", font=("Arial", 16, "bold"))
+    label_entregas_aberto.place(x= 850, y = 120)
+
+    btn_atualizar = tk.Button(root, text="Atualizar Dados", command=exibir_dados)
+    btn_atualizar.place(x=500,y=25)
+
+    btn_transferir = tk.Button(root, text="Transferir para Rota", command=mover_para_rota)
+    btn_transferir.place(x=755,y=55)
+
+    # Adicionando widgets para adicionar entregas em aberto
+    label_cod_cliente = tk.Label(root, text="Código do Cliente:")
+    label_cod_cliente.place(x=20,y=20)
+
+    cod_cliente_entry = tk.Entry(root)
+    cod_cliente_entry.place(x=125,y=20)
+
+    label_observacao = tk.Label(root, text="Observação:")
+    label_observacao.place(x=20,y=45)
+
+    observacao_entry = tk.Entry(root,width=50)
+    observacao_entry.place(x=125,y=45)
+
+    btn_adicionar_entrega = tk.Button(root, text="Adicionar Entrega em Aberto", command=adicionar_entrega_aberto)
+    btn_adicionar_entrega.place(x=40, y= 70)
+
+    btn_deletar_entrega = tk.Button(root, text="Deletar Entrega", command=deletar_entrega_aberto,bg="red", fg="black")
+    btn_deletar_entrega.place(x=1600, y=25)
+
+    btn_alterar_anotacao = tk.Button(root, text="Alterar Anotação", command=alterar_anotacao)
+    btn_alterar_anotacao.place(x=40, y=110)
+
+
+
+    ######################## entregas em rota ###############################
+
+    def exibir_dados_rota():
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+        SELECT cod_entrega, cod_cliente, nome_cliente, bairro, observação, entregador, horário_saida
+        FROM entregas_rota 
+        ORDER BY cod_entrega ASC;
+        """)
+        dados_do_banco = cursor.fetchall()
+
+        for row in tab_entregas_em_rota.get_children():
+            tab_entregas_em_rota.delete(row)
+
+        for row in dados_do_banco:
+            tab_entregas_em_rota.insert("", tk.END, values=row)
+
+        conexao.close()
+
+    def alterar_anotacao_rota():
+        selecionados = tab_entregas_em_rota.selection()
+
+        if not selecionados:
+            messagebox.showwarning("Aviso", "Nenhuma entrega selecionada para alterar a anotação.")
+            return
+
+        if len(selecionados) > 1:
+            messagebox.showwarning("Aviso", "Selecione apenas uma entrega para alterar a anotação.")
+            return
+
+        entrega_id = tab_entregas_em_rota.item(selecionados[0], "values")[0]
+
+        # Criar a nova janela (toplevel)
+        global janela_alterar_anotacao
+        janela_alterar_anotacao = tk.Toplevel(root)
+        janela_alterar_anotacao.title("Alterar Anotação")
+        janela_alterar_anotacao.geometry("400x150")
+
+        # Widgets da nova janela
+        label_nova_anotacao_rota = tk.Label(janela_alterar_anotacao, text="Nova Anotação Em Rota:")
+        label_nova_anotacao_rota.pack()
+
+        nova_anotacao_entry = tk.Entry(janela_alterar_anotacao, width=50)
+        nova_anotacao_entry.pack()
+
+        btn_confirmar_alteracao_rota = tk.Button(janela_alterar_anotacao, text="Confirmar Alteração",
+                                            command=lambda: confirmar_alteracao_rota(entrega_id, nova_anotacao_entry.get()))
+        btn_confirmar_alteracao_rota.pack()
+
+    def confirmar_alteracao_rota(entrega_id, nova_anotacao):
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        try:
+            cursor.execute("UPDATE entregas_rota SET observação = ? WHERE cod_entrega = ?", (nova_anotacao, entrega_id))
+            conexao.commit()
+            messagebox.showinfo("Sucesso", "Anotação alterada com sucesso!")
+            exibir_dados_rota()
+        except sqlite3.Error as e:
+            messagebox.showerror("Erro", "Ocorreu um erro ao alterar a anotação:\n" + str(e))
+        finally:
+            conexao.close()
+
+        # Fechar a janela de alteração
+        janela_alterar_anotacao.destroy()
+
+    def exibir_entregadores_rota():
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+        SELECT cod, telefone, nome
+        FROM entregadores 
+        ORDER BY cod ASC;
+        """)
+        dados_entregadores = cursor.fetchall()
+
+        entregadores_rota_combobox['values'] = [nome for _, _, nome in dados_entregadores]
+
+        conexao.close()
+
+    def filtrar_entregas_rota():
+        entregador_selecionado = entregadores_rota_combobox.get()
+
+        if not entregador_selecionado:
+            messagebox.showwarning("Aviso", "Selecione um entregador para filtrar as entregas.")
+            return
+
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+        SELECT cod_entrega, cod_cliente, nome_cliente, bairro, observação, entregador,horário_saida
+        FROM entregas_rota
+        WHERE entregador = ?;
+        """, (entregador_selecionado,))
+
+        dados_do_banco = cursor.fetchall()
+
+        for row in tab_entregas_em_rota.get_children():
+            tab_entregas_em_rota.delete(row)
+
+        for row in dados_do_banco:
+            tab_entregas_em_rota.insert("", tk.END, values=row)
+
+        conexao.close()
+
+    def exibir_entregas_rota():
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+        SELECT cod_entrega, cod_cliente, nome_cliente, bairro, observação, entregador,horário_saida
+        FROM entregas_rota
+        ORDER BY cod_entrega ASC;
+        """)
+        dados_do_banco = cursor.fetchall()
+
+        for row in tab_entregas_em_rota.get_children():
+            tab_entregas_em_rota.delete(row)
+
+        for row in dados_do_banco:
+            tab_entregas_em_rota.insert("", tk.END, values=row)
+
+        conexao.close()
+
+    def mover_para_finalizadas():
+        selecionados = tab_entregas_em_rota.selection()
+
+        if not selecionados:
+            messagebox.showwarning("Aviso", "Nenhuma entrega selecionada.")
+            return
+
+        horario_chegada = datetime.datetime.now().strftime("%H:%M:%S")
+
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        for item in selecionados:
+            entrega_id = tab_entregas_em_rota.item(item, "values")[0]
+            #cursor.execute("UPDATE entregas_rota SET horário_chegada = ? WHERE cod_entrega = ?", (horario_chegada, entrega_id))
+            cursor.execute("""INSERT INTO entregas_finalizadas( cod_entrega, cod_entregador , nome_cliente , bairro , telefone_entregador , entregador , data_entrega , horário_saida , horário_chegada , cod_cliente , observação )
+                    SELECT cod_entrega, cod_entregador,nome_cliente,bairro, telefone_entregador, entregador,data_entrega, horário_saida, ? ,cod_cliente, observação
+                    FROM entregas_rota WHERE cod_entrega = ?""", (horario_chegada, entrega_id))
+
+            cursor.execute("DELETE FROM entregas_rota WHERE cod_entrega = ?", (entrega_id,))
+            conexao.commit()
+
+        conexao.close()
+
+        exibir_entregas_rota()
+        
+
+    def deletar_entrega_rota():
+        selecionados = tab_entregas_em_rota.selection()
+
+        if not selecionados:
+            messagebox.showwarning("Aviso", "Nenhuma entrega selecionada para deletar.")
+            return
+
+        resposta = messagebox.askyesno("Confirmação", "Tem certeza que deseja deletar a(s) entrega(s) selecionada(s)?")
+
+        if resposta:
+            conexao = sqlite3.connect('entregas.db')
+            cursor = conexao.cursor()
+
+            for item in selecionados:
+                entrega_id = tab_entregas_em_rota.item(item, "values")[0]
+                cursor.execute("DELETE FROM entregas_rota WHERE cod_entrega = ?", (entrega_id,))
+                conexao.commit()
+
+            conexao.close()
+
+            exibir_entregas_rota()
+
+    def limpar_filtro_entregas_rota():
+        # Chamada para exibir todas as entregas em rota novamente
+        exibir_entregas_rota()
+
+    tab_entregas_em_rota = ttk.Treeview(root, height=10, columns=("col1", "col2", "col3", "col4", "col5", "col6","col7"), selectmode="extended")
+    tab_entregas_em_rota.heading("#0", text="")
+    tab_entregas_em_rota.heading("#1", text="Cod. Entrega")
+    tab_entregas_em_rota.heading("#2", text="Cod. Cliente")
+    tab_entregas_em_rota.heading("#3", text="Cliente")
+    tab_entregas_em_rota.heading("#4", text="Bairro")
+    tab_entregas_em_rota.heading("#5", text="Observação")
+    tab_entregas_em_rota.heading("#6", text="Entregador")
+    tab_entregas_em_rota.heading("#7", text="Horário Saída")
+
+    tab_entregas_em_rota.column("#0", width=0)
+    tab_entregas_em_rota.column("#1", width=100)
+    tab_entregas_em_rota.column("#2", width=100)
+    tab_entregas_em_rota.column("#3", width=200)
+    tab_entregas_em_rota.column("#4", width=150)
+    tab_entregas_em_rota.column("#5", width=200)
+    tab_entregas_em_rota.column("#6", width=100)
+    tab_entregas_em_rota.column("#7", width=100)
+
+    tab_entregas_em_rota.place(relx=0.1, rely=0.59, relwidth=0.8, relheight=0.35)
+
+    btn_transferir_finalizadas = tk.Button(root, text="Transferir para Finalizadas", command=mover_para_finalizadas,bg="green",fg="white")
+    btn_transferir_finalizadas.place(x=1200, y=550)
+
+    btn_deletar_rota = tk.Button(root, text="Deletar Entrega em Rota", command=deletar_entrega_rota, bg="red", fg="black")
+    btn_deletar_rota.place(x=1600, y=550)
+
+    entregadores_rota_combobox = ttk.Combobox(root, values=[])
+    entregadores_rota_combobox.place(x=200, y=525)
+    exibir_entregadores_rota()
+
+    btn_alterar_anotacao_rota = tk.Button(root, text="Alterar Anotação Em Rota", command=alterar_anotacao_rota)
+    btn_alterar_anotacao_rota.place(x=480, y=550)
+
+    btn_filtrar_rota = tk.Button(root, text="Filtrar por Entregador", command=filtrar_entregas_rota)
+    btn_filtrar_rota.place(x=205, y=550)
+
+    # Botão para limpar o filtro
+    btn_limpar_filtro = tk.Button(root, text="Limpar Filtro", command=limpar_filtro_entregas_rota)
+    btn_limpar_filtro.place(x=350, y=550)
+
+    label_entregas_aberto = tk.Label(root, text="ENTREGAS EM ROTA", fg="blue", font=("Arial", 16, "bold"))
+    label_entregas_aberto.place(x= 850, y = 550)
+
+
+    exibir_entregas_rota()
+    exibir_dados()
 
     conexao.close()
 

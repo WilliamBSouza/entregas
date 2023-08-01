@@ -19,12 +19,6 @@ foi adicionada a tabela em todas entregas finalizadas que antes estava em  pesqu
 foi adicionada as funções nos botões da cascata
 LEMBRETES:
 
-editar a tabela em entregas finalizadas por entregador e data para aparecer a lista selecionável
-
-
-
-
-#pausa para o café após a bagunça em janela principal (abrir_código.py e teste.py )
 
 
 
@@ -38,4 +32,10 @@ adicionar projeto frontend
  4 criar funções para adicionar entregas rota 
  5 criar funções para adicionar entregas finalizadas 
  6 criar botões e adicionar as devidas funções no mesmo
+
+
+
+ # Projeto finalizado 
+
+ # Foi um projeto muito desafiador que rendeu muitos aprendizados 
 

@@ -34,7 +34,7 @@ def todas_entregas_finalizadas():
 
     root = tk.Tk()
     root.title("Todas Entregas Finalizadas")
-    root.geometry("1300x800")
+    root.geometry("1200x500")
 
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
@@ -79,7 +79,7 @@ def todas_entregas_finalizadas():
     filtro_cliente_entry.place(x= 147, y= 20)
 
     filtrar_btn = tk.Button(root, text="Filtrar", command=filtrar_por_cliente)
-    filtrar_btn.place(x= 150,y=45)
+    filtrar_btn.place(x= 280,y=15)
 
     limpar_filtro_btn = tk.Button(root, text="Limpar Filtro", command=limpar_filtro)
     limpar_filtro_btn.place(x=640, y=20)
@@ -980,10 +980,9 @@ def janela_principal():
 
     ############### INICIO JANELA PRINCIPAL    #############
 
-
     root = tk.Tk()
     root.title("Gerenciador De Entregas")
-    root.geometry("2100x1200")
+    root.geometry("1250x700")
 
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
@@ -1240,10 +1239,10 @@ def janela_principal():
     exibir_entregadores()
 
     label_entregas_aberto = tk.Label(root, text="ENTREGAS EM ABERTO", fg="blue", font=("Arial", 16, "bold"))
-    label_entregas_aberto.place(x= 850, y = 120)
+    label_entregas_aberto.place(x= 450, y = 70)
 
     btn_atualizar = tk.Button(root, text="Atualizar Dados", command=exibir_dados)
-    btn_atualizar.place(x=500,y=25)
+    btn_atualizar.place(x=500,y=5)
 
     btn_transferir = tk.Button(root, text="Transferir para Rota", command=mover_para_rota)
     btn_transferir.place(x=755,y=55)
@@ -1262,13 +1261,13 @@ def janela_principal():
     observacao_entry.place(x=125,y=45)
 
     btn_adicionar_entrega = tk.Button(root, text="Adicionar Entrega em Aberto", command=adicionar_entrega_aberto)
-    btn_adicionar_entrega.place(x=40, y= 70)
+    btn_adicionar_entrega.place(x=140, y= 70)
 
     btn_deletar_entrega = tk.Button(root, text="Deletar Entrega", command=deletar_entrega_aberto,bg="red", fg="black")
-    btn_deletar_entrega.place(x=1600, y=25)
+    btn_deletar_entrega.place(x=1100, y=25)
 
     btn_alterar_anotacao = tk.Button(root, text="Alterar Anotação", command=alterar_anotacao)
-    btn_alterar_anotacao.place(x=40, y=110)
+    btn_alterar_anotacao.place(x=500, y=40)
 
 
 
@@ -1475,27 +1474,27 @@ def janela_principal():
     tab_entregas_em_rota.place(relx=0.1, rely=0.59, relwidth=0.8, relheight=0.35)
 
     btn_transferir_finalizadas = tk.Button(root, text="Transferir para Finalizadas", command=mover_para_finalizadas,bg="green",fg="white")
-    btn_transferir_finalizadas.place(x=1200, y=550)
+    btn_transferir_finalizadas.place(x=850, y=365)
 
     btn_deletar_rota = tk.Button(root, text="Deletar Entrega em Rota", command=deletar_entrega_rota, bg="red", fg="black")
-    btn_deletar_rota.place(x=1600, y=550)
+    btn_deletar_rota.place(x=1100, y=360)
 
     entregadores_rota_combobox = ttk.Combobox(root, values=[])
-    entregadores_rota_combobox.place(x=200, y=525)
+    entregadores_rota_combobox.place(x=150, y=355)
     exibir_entregadores_rota()
 
     btn_alterar_anotacao_rota = tk.Button(root, text="Alterar Anotação Em Rota", command=alterar_anotacao_rota)
-    btn_alterar_anotacao_rota.place(x=480, y=550)
+    btn_alterar_anotacao_rota.place(x=280, y=380)
 
     btn_filtrar_rota = tk.Button(root, text="Filtrar por Entregador", command=filtrar_entregas_rota)
-    btn_filtrar_rota.place(x=205, y=550)
+    btn_filtrar_rota.place(x=150, y=380)
 
     # Botão para limpar o filtro
     btn_limpar_filtro = tk.Button(root, text="Limpar Filtro", command=limpar_filtro_entregas_rota)
-    btn_limpar_filtro.place(x=700, y=550)
+    btn_limpar_filtro.place(x=700, y=365)
 
     label_entregas_aberto = tk.Label(root, text="ENTREGAS EM ROTA", fg="blue", font=("Arial", 16, "bold"))
-    label_entregas_aberto.place(x= 850, y = 550)
+    label_entregas_aberto.place(x= 460, y =365)
 
 
     exibir_entregas_rota()

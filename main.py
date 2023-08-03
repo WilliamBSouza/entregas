@@ -5,8 +5,6 @@ from tkinter import messagebox
 from tkinter import ttk
 import sqlite3
 from tkcalendar import Calendar, DateEntry 
-#cores
-
 
 def todas_entregas_finalizadas():
     
@@ -1235,39 +1233,39 @@ def janela_principal():
     tab_entregas_em_aberto.place(relx=0.1, rely=0.15, relwidth=0.8, relheight=0.35)
 
     entregadores_combobox = ttk.Combobox(root, values=[])
-    entregadores_combobox.place(x=750,y=25)
+    entregadores_combobox.place(relx=0.60, rely=0.01, relwidth=0.09, relheight= 0.035)
     exibir_entregadores()
 
     label_entregas_aberto = tk.Label(root, text="ENTREGAS EM ABERTO", fg="blue", font=("Arial", 16, "bold"))
-    label_entregas_aberto.place(x= 450, y = 70)
+    label_entregas_aberto.place(relx=0.37, rely=0.097, relwidth=0.20, relheight= 0.035)
 
     btn_atualizar = tk.Button(root, text="Atualizar Dados", command=exibir_dados)
-    btn_atualizar.place(x=500,y=5)
+    btn_atualizar.place(relx=0.40, rely=0.01, relwidth=0.09, relheight= 0.035)
 
     btn_transferir = tk.Button(root, text="Transferir para Rota", command=mover_para_rota)
-    btn_transferir.place(x=755,y=55)
+    btn_transferir.place(relx=0.60, rely=0.05, relwidth=0.09, relheight= 0.035)
 
     # Adicionando widgets para adicionar entregas em aberto
     label_cod_cliente = tk.Label(root, text="Código do Cliente:")
-    label_cod_cliente.place(x=20,y=20)
+    label_cod_cliente.place(relx=0.001, rely=0.01, relwidth=0.15, relheight= 0.035)
 
     cod_cliente_entry = tk.Entry(root)
-    cod_cliente_entry.place(x=125,y=20)
+    cod_cliente_entry.place(relx=0.12, rely=0.01, relwidth=0.08, relheight= 0.035)
 
     label_observacao = tk.Label(root, text="Observação:")
-    label_observacao.place(x=20,y=45)
+    label_observacao.place(relx=0.022, rely=0.05, relwidth=0.09, relheight= 0.035)
 
     observacao_entry = tk.Entry(root,width=50)
-    observacao_entry.place(x=125,y=45)
+    observacao_entry.place(relx=0.12, rely=0.05, relwidth=0.20, relheight= 0.035)
 
     btn_adicionar_entrega = tk.Button(root, text="Adicionar Entrega em Aberto", command=adicionar_entrega_aberto)
-    btn_adicionar_entrega.place(x=140, y= 70)
+    btn_adicionar_entrega.place(relx=0.12, rely=0.093, relwidth=0.14, relheight= 0.035)
 
     btn_deletar_entrega = tk.Button(root, text="Deletar Entrega", command=deletar_entrega_aberto,bg="red", fg="black")
-    btn_deletar_entrega.place(x=1100, y=25)
+    btn_deletar_entrega.place(relx=0.80, rely=0.05, relwidth=0.09, relheight= 0.035)
 
     btn_alterar_anotacao = tk.Button(root, text="Alterar Anotação", command=alterar_anotacao)
-    btn_alterar_anotacao.place(x=500, y=40)
+    btn_alterar_anotacao.place(relx=0.4, rely=0.05,relwidth=0.09, relheight= 0.035)
 
 
 
@@ -1474,27 +1472,27 @@ def janela_principal():
     tab_entregas_em_rota.place(relx=0.1, rely=0.59, relwidth=0.8, relheight=0.35)
 
     btn_transferir_finalizadas = tk.Button(root, text="Transferir para Finalizadas", command=mover_para_finalizadas,bg="green",fg="white")
-    btn_transferir_finalizadas.place(x=850, y=365)
+    btn_transferir_finalizadas.place(relx=0.57, rely=0.54, relwidth=0.12, relheight= 0.035)
 
     btn_deletar_rota = tk.Button(root, text="Deletar Entrega em Rota", command=deletar_entrega_rota, bg="red", fg="black")
-    btn_deletar_rota.place(x=1100, y=360)
+    btn_deletar_rota.place(relx=0.80, rely=0.52, relwidth=0.12, relheight= 0.035)
 
     entregadores_rota_combobox = ttk.Combobox(root, values=[])
-    entregadores_rota_combobox.place(x=150, y=355)
+    entregadores_rota_combobox.place(relx=0.105, rely=0.505, relwidth=0.09, relheight= 0.03)
     exibir_entregadores_rota()
 
     btn_alterar_anotacao_rota = tk.Button(root, text="Alterar Anotação Em Rota", command=alterar_anotacao_rota)
-    btn_alterar_anotacao_rota.place(x=280, y=380)
+    btn_alterar_anotacao_rota.place(relx=0.23, rely=0.54, relwidth=0.12, relheight= 0.035)
 
     btn_filtrar_rota = tk.Button(root, text="Filtrar por Entregador", command=filtrar_entregas_rota)
-    btn_filtrar_rota.place(x=150, y=380)
+    btn_filtrar_rota.place(relx=0.10, rely=0.54, relwidth=0.10, relheight= 0.035)
 
     # Botão para limpar o filtro
     btn_limpar_filtro = tk.Button(root, text="Limpar Filtro", command=limpar_filtro_entregas_rota)
-    btn_limpar_filtro.place(x=700, y=365)
+    btn_limpar_filtro.place(relx=0.23, rely=0.505, relwidth=0.07, relheight= 0.035)
 
     label_entregas_aberto = tk.Label(root, text="ENTREGAS EM ROTA", fg="blue", font=("Arial", 16, "bold"))
-    label_entregas_aberto.place(x= 460, y =365)
+    label_entregas_aberto.place(relx=0.37, rely=0.54, relwidth=0.20, relheight= 0.035)
 
 
     exibir_entregas_rota()

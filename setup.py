@@ -20,7 +20,7 @@ build_exe_options = {
 # Configuração da criação do executável
 setup(
     name="Gerenciador De Entregas",
-    version="1.1",
+    version="1.4",
     description="Gerencia entregas com sqlite e python Criado por William Souza",
     options={"build_exe": build_exe_options},
     executables=executables

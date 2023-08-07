@@ -6,37 +6,52 @@ from tkinter import ttk
 import sqlite3
 from tkcalendar import Calendar, DateEntry 
 
-def todas_entregas_finalizadas():
+import tkinter as tk
+from tkinter import ttk
+import sqlite3
+
+def Pesquisa_entregas_cliente():
     
     def selecionar_lista(tab_entregas, cursor, conexao, filtro_cliente):
-        for item in tab_entregas.get_children()[0:]:
-            tab_entregas.delete(item)
+        tab_entregas.delete(*tab_entregas.get_children())  # Limpa os dados existentes
 
         lista = cursor.execute("""
             SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada, observação
             FROM entregas_finalizadas
             WHERE cod_cliente LIKE ?
-            ORDER BY data_entrega AND horário_chegada ASC;
-        """, ('%' + filtro_cliente + '%',))
+            ORDER BY data_entrega, horário_chegada ASC;
+        """, ('%' + filtro_cliente + '%',)).fetchall()
 
         for row in lista:
             tab_entregas.insert("", tk.END, values=row)
 
+    def selecionar_lista_filtro(tab_entregas, cursor, conexao, filtro_cliente):
+        tab_entregas.delete(*tab_entregas.get_children())  # Limpa os dados existentes
+
+        lista_filtro = cursor.execute("""
+            SELECT cod_entrega, cod_cliente, nome_cliente, bairro, entregador, data_entrega, horário_saida, horário_chegada, observação
+            FROM entregas_finalizadas
+            WHERE nome_cliente LIKE ?
+            ORDER BY data_entrega, horário_chegada ASC;
+        """, ('%' + filtro_cliente + '%',)).fetchall()
+
+        for row in lista_filtro:
+            tab_entregas.insert("", tk.END, values=row)
+
     def filtrar_por_cliente():
         filtro_cliente = filtro_cliente_entry.get()
-        selecionar_lista(tab_entregas, cursor, conexao, filtro_cliente)
+        selecionar_lista_filtro(tab_entregas, cursor, conexao, filtro_cliente)
 
     def limpar_filtro():
         filtro_cliente_entry.delete(0, tk.END)
         selecionar_lista(tab_entregas, cursor, conexao, "")
 
     root = tk.Tk()
-    root.title("Todas Entregas Finalizadas")
+    root.title("Pesquisa De Entregas Por Cliente E Todas Finalizadas")
     root.geometry("1200x500")
 
     conexao = sqlite3.connect('entregas.db')
     cursor = conexao.cursor()
-
 
     tab_entregas = ttk.Treeview(root, height=3, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7","col8","col9"))
 
@@ -51,8 +66,7 @@ def todas_entregas_finalizadas():
     tab_entregas.heading("#8", text="Horário Chegada")
     tab_entregas.heading("#9", text="Observação")
 
-        #colocando o tamanho das colunas
-    #o tamanho da coluna é dividida em 500 onde 50 seria 10% da tela
+    #colocando o tamanho das colunas
     tab_entregas.column("#0", width=0)
     tab_entregas.column("#1", width=100)
     tab_entregas.column("#2", width=50)
@@ -66,27 +80,29 @@ def todas_entregas_finalizadas():
    
     tab_entregas.place(relx=0.01, rely=0.1 , relwidth=0.95, relheight=0.85)
 
-    scrollista = Scrollbar(root, orient="vertical")
+    scrollista = tk.Scrollbar(root, orient="vertical")
     tab_entregas.configure(yscroll=scrollista.set)
-    scrollista.place(relx=0.96 , rely=0.1,relwidth=0.04, relheight=0.85)
+    scrollista.place(relx=0.96 , rely=0.1, relwidth=0.04, relheight=0.85)
 
-    filtro_cliente_label = tk.Label(root, text="Filtrar Código do Cliente:")
-    filtro_cliente_label.place(x= 10 ,y=20) 
+    filtro_cliente_label = tk.Label(root, text="Filtrar Nome do Cliente:")
+    filtro_cliente_label.place(x=10, y=20) 
 
     filtro_cliente_entry = tk.Entry(root)
-    filtro_cliente_entry.place(x= 147, y= 20)
+    filtro_cliente_entry.place(x=147, y=20)
 
     filtrar_btn = tk.Button(root, text="Filtrar", command=filtrar_por_cliente)
-    filtrar_btn.place(x= 280,y=15)
+    filtrar_btn.place(x=280, y=15)
 
     limpar_filtro_btn = tk.Button(root, text="Limpar Filtro", command=limpar_filtro)
     limpar_filtro_btn.place(x=640, y=20)
 
-    selecionar_lista(tab_entregas, cursor, conexao, "")  # Inicialmente mostra todas as entregas finalizadas
+    selecionar_lista(tab_entregas, cursor, conexao, " ")  # mostra todas as entregas finalizadas
 
     root.mainloop()
 
     conexao.close()
+
+
 
 def lista_selecao_entregador(event):
     
@@ -1029,7 +1045,7 @@ def janela_principal():
         "Pesquisa Entregas De Hoje": pesquisa_hoje_janela,
         "Pesquisa Entregas Por Data": pesquisa_data_janela,
         "Pesquisa Entregas Data E Entregador": pesquisa_data_e_entregador_janela,
-        "Todas Entregas Finalizadas": todas_entregas_finalizadas
+        "Pesquisa Entregas Por Cliente E Todas Finalizadas": Pesquisa_entregas_cliente
     })
 
     # Adiciona os menus principais à barra de menu
@@ -1167,52 +1183,52 @@ def janela_principal():
 
             exibir_dados()
 
-    def alterar_anotacao():
+    def alterar_observacao():
         selecionados = tab_entregas_em_aberto.selection()
 
         if not selecionados:
-            messagebox.showwarning("Aviso", "Nenhuma entrega selecionada para alterar a anotação.")
+            messagebox.showwarning("Aviso", "Nenhuma entrega selecionada para alterar a observação.")
             return
 
         if len(selecionados) > 1:
-            messagebox.showwarning("Aviso", "Selecione apenas uma entrega para alterar a anotação.")
+            messagebox.showwarning("Aviso", "Selecione apenas uma entrega para alterar a observação.")
             return
 
         entrega_id = tab_entregas_em_aberto.item(selecionados[0], "values")[0]
 
         # Criar a nova janela (toplevel)
-        global janela_alterar_anotacao
-        janela_alterar_anotacao = tk.Toplevel(root)
-        janela_alterar_anotacao.title("Alterar Anotação")
-        janela_alterar_anotacao.geometry("400x150")
+        global janela_alterar_observacao
+        janela_alterar_observacao = tk.Toplevel(root)
+        janela_alterar_observacao.title("Alterar observação")
+        janela_alterar_observacao.geometry("400x150")
 
         # Widgets da nova janela
-        label_nova_anotacao = tk.Label(janela_alterar_anotacao, text="Nova Anotação:")
-        label_nova_anotacao.pack()
+        label_nova_observacao = tk.Label(janela_alterar_observacao, text="Nova observação:")
+        label_nova_observacao.pack()
 
-        nova_anotacao_entry = tk.Entry(janela_alterar_anotacao, width=50)
-        nova_anotacao_entry.pack()
+        nova_observacao_entry = tk.Entry(janela_alterar_observacao, width=50)
+        nova_observacao_entry.pack()
 
-        btn_confirmar_alteracao = tk.Button(janela_alterar_anotacao, text="Confirmar Alteração",
-                                            command=lambda: confirmar_alteracao(entrega_id, nova_anotacao_entry.get()))
+        btn_confirmar_alteracao = tk.Button(janela_alterar_observacao, text="Confirmar Alteração",
+                                            command=lambda: confirmar_alteracao(entrega_id, nova_observacao_entry.get()))
         btn_confirmar_alteracao.pack()
 
-    def confirmar_alteracao(entrega_id, nova_anotacao):
+    def confirmar_alteracao(entrega_id, nova_observacao):
         conexao = sqlite3.connect('entregas.db')
         cursor = conexao.cursor()
 
         try:
-            cursor.execute("UPDATE entregas_aberto SET observação = ? WHERE cod_entrega = ?", (nova_anotacao, entrega_id))
+            cursor.execute("UPDATE entregas_aberto SET observação = ? WHERE cod_entrega = ?", (nova_observacao, entrega_id))
             conexao.commit()
-            messagebox.showinfo("Sucesso", "Anotação alterada com sucesso!")
+            messagebox.showinfo("Sucesso", "observação alterada com sucesso!")
             exibir_dados()
         except sqlite3.Error as e:
-            messagebox.showerror("Erro", "Ocorreu um erro ao alterar a anotação:\n" + str(e))
+            messagebox.showerror("Erro", "Ocorreu um erro ao alterar a observação:\n" + str(e))
         finally:
             conexao.close()
 
         # Fechar a janela de alteração
-        janela_alterar_anotacao.destroy()
+        janela_alterar_observacao.destroy()
 
 
     tab_entregas_em_aberto = ttk.Treeview(root, height=10, columns=("col1", "col2", "col3", "col4", "col5"), selectmode="extended")
@@ -1264,8 +1280,8 @@ def janela_principal():
     btn_deletar_entrega = tk.Button(root, text="Deletar Entrega", command=deletar_entrega_aberto,bg="red", fg="black")
     btn_deletar_entrega.place(relx=0.80, rely=0.05, relwidth=0.09, relheight= 0.035)
 
-    btn_alterar_anotacao = tk.Button(root, text="Alterar Anotação", command=alterar_anotacao)
-    btn_alterar_anotacao.place(relx=0.4, rely=0.05,relwidth=0.09, relheight= 0.035)
+    btn_alterar_observacao = tk.Button(root, text="Alterar observação", command=alterar_observacao)
+    btn_alterar_observacao.place(relx=0.4, rely=0.05,relwidth=0.09, relheight= 0.035)
 
 
 
@@ -1290,52 +1306,52 @@ def janela_principal():
 
         conexao.close()
 
-    def alterar_anotacao_rota():
+    def alterar_observacao_rota():
         selecionados = tab_entregas_em_rota.selection()
 
         if not selecionados:
-            messagebox.showwarning("Aviso", "Nenhuma entrega selecionada para alterar a anotação.")
+            messagebox.showwarning("Aviso", "Nenhuma entrega selecionada para alterar a observação.")
             return
 
         if len(selecionados) > 1:
-            messagebox.showwarning("Aviso", "Selecione apenas uma entrega para alterar a anotação.")
+            messagebox.showwarning("Aviso", "Selecione apenas uma entrega para alterar a observação.")
             return
 
         entrega_id = tab_entregas_em_rota.item(selecionados[0], "values")[0]
 
         # Criar a nova janela (toplevel)
-        global janela_alterar_anotacao
-        janela_alterar_anotacao = tk.Toplevel(root)
-        janela_alterar_anotacao.title("Alterar Anotação")
-        janela_alterar_anotacao.geometry("400x150")
+        global janela_alterar_observacao
+        janela_alterar_observacao = tk.Toplevel(root)
+        janela_alterar_observacao.title("Alterar observação")
+        janela_alterar_observacao.geometry("400x150")
 
         # Widgets da nova janela
-        label_nova_anotacao_rota = tk.Label(janela_alterar_anotacao, text="Nova Anotação Em Rota:")
-        label_nova_anotacao_rota.pack()
+        label_nova_observacao_rota = tk.Label(janela_alterar_observacao, text="Nova observação Em Rota:")
+        label_nova_observacao_rota.pack()
 
-        nova_anotacao_entry = tk.Entry(janela_alterar_anotacao, width=50)
-        nova_anotacao_entry.pack()
+        nova_observacao_entry = tk.Entry(janela_alterar_observacao, width=50)
+        nova_observacao_entry.pack()
 
-        btn_confirmar_alteracao_rota = tk.Button(janela_alterar_anotacao, text="Confirmar Alteração",
-                                            command=lambda: confirmar_alteracao_rota(entrega_id, nova_anotacao_entry.get()))
+        btn_confirmar_alteracao_rota = tk.Button(janela_alterar_observacao, text="Confirmar Alteração",
+                                            command=lambda: confirmar_alteracao_rota(entrega_id, nova_observacao_entry.get()))
         btn_confirmar_alteracao_rota.pack()
 
-    def confirmar_alteracao_rota(entrega_id, nova_anotacao):
+    def confirmar_alteracao_rota(entrega_id, nova_observacao):
         conexao = sqlite3.connect('entregas.db')
         cursor = conexao.cursor()
 
         try:
-            cursor.execute("UPDATE entregas_rota SET observação = ? WHERE cod_entrega = ?", (nova_anotacao, entrega_id))
+            cursor.execute("UPDATE entregas_rota SET observação = ? WHERE cod_entrega = ?", (nova_observacao, entrega_id))
             conexao.commit()
-            messagebox.showinfo("Sucesso", "Anotação alterada com sucesso!")
+            messagebox.showinfo("Sucesso", "observação alterada com sucesso!")
             exibir_dados_rota()
         except sqlite3.Error as e:
-            messagebox.showerror("Erro", "Ocorreu um erro ao alterar a anotação:\n" + str(e))
+            messagebox.showerror("Erro", "Ocorreu um erro ao alterar a observação:\n" + str(e))
         finally:
             conexao.close()
 
         # Fechar a janela de alteração
-        janela_alterar_anotacao.destroy()
+        janela_alterar_observacao.destroy()
 
     def exibir_entregadores_rota():
         conexao = sqlite3.connect('entregas.db')
@@ -1450,6 +1466,53 @@ def janela_principal():
         # Chamada para exibir todas as entregas em rota novamente
         exibir_entregas_rota()
 
+    def alterar_entregador_rota():
+        selecionados = tab_entregas_em_rota.selection()
+
+        if not selecionados:
+            messagebox.showwarning("Aviso", "Nenhuma entrega selecionada para alterar o entregador.")
+            return
+
+        if len(selecionados) > 1:
+            messagebox.showwarning("Aviso", "Selecione apenas uma entrega para alterar o entregador.")
+            return
+
+        entrega_id = tab_entregas_em_rota.item(selecionados[0], "values")[0]
+
+        # Criar a nova janela (toplevel)
+        global janela_alterar_entregador
+        janela_alterar_entregador = tk.Toplevel(root)
+        janela_alterar_entregador.title("Alterar Entregador em Rota")
+        janela_alterar_entregador.geometry("400x150")
+
+        # Widgets da nova janela
+        label_novo_entregador = tk.Label(janela_alterar_entregador, text="Novo Entregador:")
+        label_novo_entregador.pack()
+
+        novo_entregador_combobox = ttk.Combobox(janela_alterar_entregador, values=entregadores_rota_combobox['values'])
+        novo_entregador_combobox.pack()
+
+        btn_confirmar_alteracao_entregador = tk.Button(janela_alterar_entregador, text="Confirmar Alteração",
+                                            command=lambda: confirmar_alteracao_entregador(entrega_id, novo_entregador_combobox.get()))
+        btn_confirmar_alteracao_entregador.pack()
+
+    def confirmar_alteracao_entregador(entrega_id, novo_entregador):
+        conexao = sqlite3.connect('entregas.db')
+        cursor = conexao.cursor()
+
+        try:
+            cursor.execute("UPDATE entregas_rota SET entregador = ? WHERE cod_entrega = ?", (novo_entregador, entrega_id))
+            conexao.commit()
+            messagebox.showinfo("Sucesso", "Entregador alterado com sucesso!")
+            exibir_dados_rota()
+        except sqlite3.Error as e:
+            messagebox.showerror("Erro", "Ocorreu um erro ao alterar o entregador:\n" + str(e))
+        finally:
+            conexao.close()
+
+        # Fechar a janela de alteração
+        janela_alterar_entregador.destroy()
+
     tab_entregas_em_rota = ttk.Treeview(root, height=10, columns=("col1", "col2", "col3", "col4", "col5", "col6","col7"), selectmode="extended")
     tab_entregas_em_rota.heading("#0", text="")
     tab_entregas_em_rota.heading("#1", text="Cod. Entrega")
@@ -1472,7 +1535,7 @@ def janela_principal():
     tab_entregas_em_rota.place(relx=0.1, rely=0.59, relwidth=0.8, relheight=0.35)
 
     btn_transferir_finalizadas = tk.Button(root, text="Transferir para Finalizadas", command=mover_para_finalizadas,bg="green",fg="white")
-    btn_transferir_finalizadas.place(relx=0.57, rely=0.54, relwidth=0.12, relheight= 0.035)
+    btn_transferir_finalizadas.place(relx=0.60, rely=0.54, relwidth=0.12, relheight= 0.035)
 
     btn_deletar_rota = tk.Button(root, text="Deletar Entrega em Rota", command=deletar_entrega_rota, bg="red", fg="black")
     btn_deletar_rota.place(relx=0.80, rely=0.52, relwidth=0.12, relheight= 0.035)
@@ -1481,18 +1544,23 @@ def janela_principal():
     entregadores_rota_combobox.place(relx=0.105, rely=0.505, relwidth=0.09, relheight= 0.03)
     exibir_entregadores_rota()
 
-    btn_alterar_anotacao_rota = tk.Button(root, text="Alterar Anotação Em Rota", command=alterar_anotacao_rota)
-    btn_alterar_anotacao_rota.place(relx=0.23, rely=0.54, relwidth=0.12, relheight= 0.035)
+    btn_alterar_observacao_rota = tk.Button(root, text="Alterar observação Em Rota", command=alterar_observacao_rota)
+    btn_alterar_observacao_rota.place(relx=0.26, rely=0.545, relwidth=0.12, relheight= 0.035)
 
     btn_filtrar_rota = tk.Button(root, text="Filtrar por Entregador", command=filtrar_entregas_rota)
-    btn_filtrar_rota.place(relx=0.10, rely=0.54, relwidth=0.10, relheight= 0.035)
+    btn_filtrar_rota.place(relx=0.20, rely=0.505, relwidth=0.10, relheight= 0.035)
 
     # Botão para limpar o filtro
     btn_limpar_filtro = tk.Button(root, text="Limpar Filtro", command=limpar_filtro_entregas_rota)
-    btn_limpar_filtro.place(relx=0.23, rely=0.505, relwidth=0.07, relheight= 0.035)
+    btn_limpar_filtro.place(relx=0.31, rely=0.505, relwidth=0.07, relheight= 0.035)
 
     label_entregas_aberto = tk.Label(root, text="ENTREGAS EM ROTA", fg="blue", font=("Arial", 16, "bold"))
-    label_entregas_aberto.place(relx=0.37, rely=0.54, relwidth=0.20, relheight= 0.035)
+    label_entregas_aberto.place(relx=0.38, rely=0.54, relwidth=0.20, relheight= 0.035)
+
+    # Botão para alterar entregador em rota
+    btn_alterar_entregador_rota = tk.Button(root, text="Alterar Entregador Em Rota", command=alterar_entregador_rota)
+    btn_alterar_entregador_rota.place(relx=0.105, rely=0.545, relwidth=0.15, relheight= 0.035)
+
 
 
     exibir_entregas_rota()
